@@ -105,26 +105,24 @@
 
 ;;
 (declare-function straight--build-file "")
-;; boostraping straight.el is relatively slow, ~200ms. so only do it at compile time
+;; bootstraping straight.el is relatively slow, ~200ms. so only do it at compile time
 (defvar bootstrap-version)
 ;; the following lines are copied from
 ;; https://github.com/raxod502/straight.el#conceptual-overview but
 ;; it is only loaded at compile time. Actually at runtime,
 ;; straight.el is not loaded at all.
-(defvar boostrap-file)
+(defvar bootstrap-version)
 (let ((bootstrap-file
        (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
       (bootstrap-version 5))
-  (no-load-path-log "BOOSTRAPGING straight.el")
   (unless (file-exists-p bootstrap-file)
     (with-current-buffer
-        (no-load-path-log "download %s for boostraping straight.el" boostrap-file)
-      (url-retrieve-synchronously
-       "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-       'silent 'inhibit-cookies)
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
       (goto-char (point-max))
       (eval-print-last-sexp)))
-  (load bootstrap-file nil nil nil))
+  (load bootstrap-file nil 'nomessage))
 (no-load-path-log "straight.el is loaded")
 ;; Again, we only load use-package at compile time. And use-package
 ;; will be lazily loaded runtime because of `bind-key.el` is reqired
@@ -135,7 +133,6 @@
 ;; suppress compilation warning
 (defvar straight-vc-git-default-protocol)
 (setq straight-vc-git-default-clone-depth 1)
-(setq straight-vc-git-default-protocol 'ssh)
 (require 'use-package)
 (setq use-package-verbose 'debug)
 
