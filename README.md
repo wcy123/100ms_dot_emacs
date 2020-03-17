@@ -34,3 +34,19 @@ e.g. `~/.emacs.d/.autoloads.el` and compile it into a 'elc' file, all
 
 In the sample `init.el`, I can start emacs in less than 100ms and I
 still uses many packages.
+
+How to setup the sample `init.el`?
+
+First of all, you must compile `init.el` into `init.elc`. As mentioned
+aboved, it installs and builds everything.
+
+```
+make
+```
+
+put the following line into your `~/.emacs`
+
+
+```el
+(load "~/where/to/init.elc")
+```
