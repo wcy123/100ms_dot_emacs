@@ -30,6 +30,7 @@
 ;; NOTE: `no-load-path.el` is only needed at compile time. at runtime, it is not
 ;;loaded at all
 
+(require 'bytecomp)
 (defvar no-load-path--prelude
   `((defvar no-load-path-features-mapping (make-hash-table))
     (defvar no-load-path--profile t)
@@ -65,8 +66,8 @@
     (defvar personal-keybindings '())
     (advice-add 'require :around #'my-require-advice))
   "the initialization source code at runtime.")
-;; (require 'bytecomp)
-(put 'require 'byte-hunk-handler 'my-byte-compile-file-form-require)
+(mapc #'eval no-load-path--prelude)
+
 ;; this function hijack origin handler and cache the search path in
 ;; the compiled elisp code.
 (defun my-byte-compile-file-form-require (form)
@@ -76,15 +77,19 @@
       (byte-compile-file-form-require `(require ,feature
                                                 ,(or located-file (eval filename))
                                                 ,noerror)))))
-(mapc #'eval no-load-path--prelude)
+(put 'require 'byte-hunk-handler 'my-byte-compile-file-form-require)
 
+(defun no-load-path--replace-home (file)
+  (and file (replace-regexp-in-string (concat "\\`" (regexp-quote (getenv "HOME")))
+                            "~" file)))
 (defun no-load-path--find-file (file)
-    (locate-file
-     (let ((file1 (format "%s" file)))
-       (if (string= (file-name-extension file1) "el")
-           (file-name-sans-extension file1)
-         file1))
-     load-path '(".elc" ".el") nil))
+  (let ((ret (locate-file
+              (let ((file1 (format "%s" file)))
+                (if (string= (file-name-extension file1) "el")
+                    (file-name-sans-extension file1)
+                  file1))
+              load-path '(".elc" ".el") nil)))
+    (no-load-path--replace-home ret)))
 
 (defun no-load-path-replace-autoload (autoload)
   (cond
@@ -102,8 +107,8 @@
    ((consp autoload) (cons (no-load-path-replace-autoload (car autoload))
                            (no-load-path-replace-autoload (cdr autoload))))
    (t autoload)))
-
 ;;
+(no-load-path-log "boostraping straight.el")
 (declare-function straight--build-file "")
 ;; bootstraping straight.el is relatively slow, ~200ms. so only do it at compile time
 (defvar bootstrap-version)
@@ -143,26 +148,26 @@
     (no-load-path-log "write to file %S" autoload-file)
     (with-temp-file autoload-file
       (mapc #'(lambda(c) (print c (current-buffer)))
-	    no-load-path--prelude)
+            no-load-path--prelude)
       (maphash
        #'(lambda (package autoloads)
-	   (princ (format ";; autoloads for package %s\n" package) (current-buffer))
-	   (let ()
-	     (mapc #'(lambda (feature)
-		       (let* ((package-feature-file (straight--build-file package (format "%s" feature)))
-			      (feature-file (locate-file
-					     (file-name-base package-feature-file)
-					     (list (file-name-directory package-feature-file))
-					     '(".elc" ".el") nil)))
-			 (princ (format ";; package %s provides %s\n" package feature) (current-buffer))
-			 (princ (format "(puthash '%s %S no-load-path-features-mapping)\n"
-					feature feature-file)
-				(current-buffer)))
-		       )
-		   (car autoloads))
-	     (mapc #'(lambda (autoload)
-                   (print (no-load-path-replace-autoload autoload) (current-buffer)))
-		   (cdr autoloads))))
+           (princ (format ";; autoloads for package %s\n" package) (current-buffer))
+           (let ()
+             (mapc #'(lambda (feature)
+                       (let* ((package-feature-file (straight--build-file package (format "%s" feature)))
+                              (feature-file (no-load-path--replace-home (locate-file
+                                                                         (file-name-base package-feature-file)
+                                                                         (list (file-name-directory package-feature-file))
+                                                                         '(".elc" ".el") nil))))
+                         (princ (format ";; package %s provides %s\n" package feature) (current-buffer))
+                         (princ (format "(puthash '%s %S no-load-path-features-mapping)\n"
+                                        feature feature-file)
+                                (current-buffer)))
+                       )
+                   (car autoloads))
+             (mapc #'(lambda (autoload)
+                       (print (no-load-path-replace-autoload autoload) (current-buffer)))
+                   (cdr autoloads))))
        autoloads-cache))
     (no-load-path-log "compile %s" autoload-file)
     (byte-compile-file autoload-file nil)))
