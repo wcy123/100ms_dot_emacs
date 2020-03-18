@@ -51,9 +51,9 @@
     (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
     (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
     (setq mouse-wheel-follow-mouse 't))) ;; scroll window under mouse
-(add-hook 'after-init-idle-hook 'show-paren-mode)
-(add-hook 'after-init-idle-hook 'global-subword-mode)
-(add-hook 'after-init-idle-hook 'savehist-mode)
+(add-hook 'after-init-idle-hook 'show-paren-mode t nil)
+(add-hook 'after-init-idle-hook 'global-subword-mode t nil)
+(add-hook 'after-init-idle-hook 'savehist-mode t nil)
 
 ;; == exec-path-from-shell
 (use-package exec-path-from-shell
@@ -96,13 +96,12 @@
 
 ;; == projectile
 (use-package projectile
-     :defines (projectile-completion-system projectile-command-map)
-     :functions (projectile-discover-projects-in-directory)
-     :bind-keymap ("C-x p" . projectile-command-map)
-     :config
-     (add-hook 'after-init-idle #'(lambda()
-                                    (projectile-discover-projects-in-directory (expand-file-name "~/d/working"))))`
-     (setq projectile-completion-system 'ivy))
+  :defines (projectile-completion-system projectile-command-map)
+  :functions (projectile-discover-projects-in-directory)
+  :bind-keymap ("C-x p" . projectile-command-map)
+  :config
+  (projectile-discover-projects-in-directory (getenv "PWD"))
+  (setq projectile-completion-system 'ivy))
 
 ;; == magit
 (use-package magit
