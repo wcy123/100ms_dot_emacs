@@ -104,6 +104,9 @@
                                     (projectile-discover-projects-in-directory (expand-file-name "~/d/working"))))`
      (setq projectile-completion-system 'ivy))
 
+;; == magit
+(use-package magit
+  :bind ("C-x g" . 'magit-status))
 ;; == compile
 (global-set-key (kbd "M-7") 'compile)
 (eval-after-load 'compile
@@ -203,6 +206,7 @@
   :hook (c-mode . cscope-minor-mode)
   :hook (c++-mode . cscope-minor-mode)
   :hook (dired-mode-hook . cscope-minor-mode))
+
 ;; == cmake
 (use-package cmake-mode
   :defines (company-backends)
@@ -212,6 +216,7 @@
   :config
   (defun my-cmake-mode-hook ()
     (set (make-local-variable 'company-backends) '(company-files company-cmake))))
+
 ;; -------------------- ELISP --------------------------------
 (eval-after-load 'elisp-mode
   '(progn
@@ -236,9 +241,11 @@
 ;; == adoc
 (use-package adoc-mode
   :mode "\\.adoc\\'")
+
 ;;; -------------------- haskell ---------------
 (use-package haskell-mode
   :mode "\\.hs\\'")
+
 ;;; ------------------ for rust ----------------------------
 (use-package rust-mode
   :mode "\\.rs\\'"
@@ -247,7 +254,6 @@
   :config
   (add-hook 'rust-mode-hook #'cargo-minor-mode)
   (setq rust-format-on-save t))
-
 (use-package racer
   :defines (rust-mode-map company-tooltip-align-annotations)
   :functions (company-indent-or-complete-common )
