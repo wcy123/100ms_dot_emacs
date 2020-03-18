@@ -139,7 +139,7 @@
 (defvar straight-vc-git-default-protocol)
 (setq straight-vc-git-default-clone-depth 1)
 (require 'use-package)
-(setq use-package-verbose 'debug)
+(setq use-package-verbose nil)
 
 ;; dump all autoload objects discovered by straight.el then we don't
 ;; need straight.el at runtime.

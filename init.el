@@ -10,10 +10,6 @@
  'no-load-path-init
  (no-load-path-init))
 
-(defvar after-init-idle-hook '())
-(run-with-idle-timer 1 nil
-                     #'(lambda() (run-hooks 'after-init-idle-hook)))
-
 (profile-form
  'add-hook
  (progn
@@ -40,35 +36,53 @@
     (set-default 'indent-tabs-mode nil)
     (add-to-list 'minor-mode-alist '(mark-active " Mark"))
     (defalias 'yes-or-no-p #'y-or-n-p)))
-(if (display-graphic-p)
-    nil
-  (xterm-mouse-mode 1))
+
+(use-package xt-mouse
+  :straight (xt-mouse :type built-in)
+  :when (not (display-graphic-p))
+  :defer 2
+  :config (xterm-mouse-mode 1))
+
 (setq
  ;; I prefer split horizontally.
  split-width-threshold 160
  ;; keyboard scroll one line at a time
  scroll-step 1)
 ;; scroll one line at a time (less "jumpy" than defaults)
-(eval-after-load 'mwheel
-  (progn
-    (defvar mouse-wheel-scroll-amount)
-    (defvar mouse-wheel-progressive-speed)
-    (defvar mouse-wheel-follow-mouse)
-    (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
-    (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
-    (setq mouse-wheel-follow-mouse 't))) ;; scroll window under mouse
-(add-hook 'after-init-idle-hook 'show-paren-mode t nil)
-(add-hook 'after-init-idle-hook 'global-subword-mode t nil)
-(add-hook 'after-init-idle-hook 'savehist-mode t nil)
+(use-package mwheel
+  :after (mwheel)
+  :straight (mwheel :type built-in)
+  :defines (mouse-wheel-scroll-amount mouse-wheel-progressive-speed  mouse-wheel-follow-mouse)
+  :config
+  (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
+  (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
+  (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
+  )
+
+(use-package paren
+  :straight (paren :type built-in)
+  :hook (prog-mode . show-paren-mode))
+
+(use-package subword
+  :straight (subword :type built-in)
+  :defer 2
+  :config
+  (global-subword-mode 1))
+
+(use-package savehist
+  :straight (savehist :type built-in)
+  :defer 2
+  :config
+  (savehist-mode 1))
 (menu-bar-mode -1)
 
 ;; == exec-path-from-shell
 (use-package exec-path-from-shell
-     :functions (exec-path-from-shell-initialize)
-     :config
-     (when (or (memq window-system '(mac ns x))
+  :when (or (memq window-system '(mac ns x))
 	       (memq system-type '(darwin)))
-       (exec-path-from-shell-initialize)))
+  :functions (exec-path-from-shell-initialize)
+  :config
+  (exec-path-from-shell-initialize))
 
 ;; == configuration for win32
 (when (eq window-system 'w32)
@@ -92,12 +106,12 @@
 
 ;; == avy
 (use-package avy
+  :disabled nil
+  :after (isearch-mode-map)
   :bind (:map isearch-mode-map
               (("C-l" . avy-isearch))))
 ;; === rg
 (use-package rg
-  :defines (rg-global-map leader-key-mode-keymap)
-  :after (leader-key-mode)
   :commands (rg)
   :bind (("C-c s"  . rg)))
 
@@ -114,13 +128,13 @@
 (use-package magit
   :bind ("C-x g" . 'magit-status))
 ;; == compile
-(global-set-key (kbd "M-7") 'compile)
-(eval-after-load 'compile
-  '(progn
-     (defvar compilation-scroll-output)
-     (defvar compilation-read-command)
-     (setq compilation-scroll-output t
-           compilation-read-command nil)))
+(use-package compile
+  :straight (compile :type built-in)
+  :bind (("M-7" . compile))
+  :defines (compilation-scroll-output compilation-read-command)
+  :config
+       (setq compilation-scroll-output t
+           compilation-read-command nil))
 
 ;; == ffap
 (use-package ffap
@@ -133,42 +147,49 @@
 
 ;; == company-mode
 (use-package company
-     :defines (company-active-map
-	       company-idle-delay
-	       company-minimum-prefix-length
-	       company-show-numbers
-	       company-tooltip-limit
-	       company-dabbrev-downcase)
-     ;; DO NOT ENABLE IT, it slow down about 500ms
-     ;; :init (add-hook 'after-init-hook 'global-company-mode)
-     :bind (:map company-active-map
-		 (("C-n" . company-select-next)
-		  ("C-p" . company-select-previous)))
-     :config
-     (setq company-idle-delay              nil
-	   company-minimum-prefix-length   2
-	   company-show-numbers            t
-	   company-tooltip-limit           20
-	   company-dabbrev-downcase        nil
-	   )
-     :bind ("M-RET" . company-complete-common))
+  :after (prog-mode)
+  :defines (company-active-map
+            company-idle-delay
+            company-minimum-prefix-length
+            company-show-numbers
+            company-tooltip-limit
+            company-dabbrev-downcase)
+  :hook (prog-mode . company-mode)
+  :bind (:map company-active-map
+              (("C-n" . company-select-next)
+               ("C-p" . company-select-previous)))
+  :config
+  (setq company-idle-delay              nil)
+  (setq company-minimum-prefix-length   2)
+  (setq company-show-numbers            t)
+  (setq company-tooltip-limit           20)
+  (setq company-dabbrev-downcase        nil)
+  :bind (:map prog-mode-map
+              ("M-RET" . company-complete-common)))
 (use-package company-irony
-     :after company)
+  :disabled t
+  :after company)
 (use-package company-c-headers
-     :after company)
+  :after company
+  :defines (company-backends)
+  :config
+  (add-to-list 'company-backends 'company-c-headers))
 
 ;; == flycheck ==
 (use-package flycheck
-     :defer t
-     :config
-     (add-hook 'c++-mode-hook 'flycheck-mode)
-     (add-hook 'c-mode-hook 'flycheck-mode))
+  :disabled t
+  :hook ((c++-mode c-mode) . flycheck-mode))
+
 
 ;; == clang-format
 (use-package clang-format
-     :defines (clang-format-fallback-style)
-     :config
-     (set-default 'clang-format-fallback-style "Google"))
+  :defines (clang-format-fallback-style)
+  :after (cc-mode)
+  :config
+  (set-default 'clang-format-fallback-style "Google")
+  (add-hook 'c-mode-common-hook #'(lambda()
+                                    (add-hook 'before-save-hook
+                                              'clang-format-buffer t t))))
 
 ;; == ace-jump-mode
 (use-package ace-jump-mode)
@@ -248,22 +269,14 @@
     (set (make-local-variable 'company-backends) '(company-files company-cmake))))
 
 ;; -------------------- ELISP --------------------------------
-(eval-after-load 'elisp-mode
-  '(progn
-    (defun wcy-emacs-lisp-mode-on-file-open()
-      (set-fill-column 80)
-      (add-hook 'after-save-hook 'wcy-emacs-lisp-compile-on-save t t))
-    (defun wcy-emacs-lisp-compile-on-save ()
-      (when (and buffer-file-name
-                 (string-match "\\.el$" buffer-file-name))
-        ;;(byte-compile-file buffer-file-name)
-        ))
-    (add-hook 'emacs-lisp-mode-hook 'wcy-emacs-lisp-mode-on-file-open)
-    (add-hook 'emacs-lisp-mode-hook 'auto-fill-mode)
-    (define-key emacs-lisp-mode-map (kbd "C-c C-l") #'eval-buffer)
-    (define-key emacs-lisp-mode-map (kbd "C-c C-c") #'eval-defun)
-    (define-key emacs-lisp-mode-map (kbd "C-c C-m") #'pp-macroexpand-expression)
-    ))
+(use-package elisp-mode
+  :straight (elisp-mode :type built-in)
+  :hook (emacs-lisp-mode-hook . auto-fill-mode)
+  :bind (:map emacs-lisp-mode-map
+              ("C-c C-l" . eval-buffer)
+              ("C-c C-c" . eval-defun)
+              ("C-c C-m" . pp-macroexpand-expression)
+              ("C-c C-e" . pp-macroexpand-last-sexp)))
 ;; ------------------- protobuf ------------------------
 (use-package protobuf-mode
   :mode "\\.proto\\'")
