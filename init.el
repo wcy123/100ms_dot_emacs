@@ -17,31 +17,20 @@
 (profile-form
  'add-hook
  (progn
-  ;; boost startup speed
-  ;; (defvar inhbit-startup-echo-area-message nil)
-  (setq package-enable-at-startup nil)
-  (setq inhibit-default-init t)
-  ;; (setq initial-buffer-choice nil)
-  ;; (setq inhbit-startup-echo-area-message nil)
-  ;; (setq inhibit-startup-screen nil)
-  ;; (setq initial-major-mode 'text-mode)
-  (add-hook 'after-init-hook
-            #'(lambda ()
-                (message "%s"
-                         (concat
-                           ";; SYS INIT time: " (format "%s ms"
-                                                        (* 1000.0 (float-time
-                                                                   (time-subtract
-                                                                    after-init-time
-                                                                    before-init-time))))
-                           "\n"
-                           ";; USER INIT time: " (format "%s ms"
-                                                         (* 1000.0
-                                                            (float-time
-                                                             (time-subtract
-                                                              (current-time)
-                                                              before-init-time))))
-                           ))))))
+   (setq package-enable-at-startup nil)
+   (setq inhibit-default-init t)
+   ;; (setq initial-buffer-choice nil)
+   (setq inhibit-startup-echo-area-message (user-login-name))
+   (setq inhibit-startup-screen t)
+   (setq initial-major-mode 'text-mode)
+   (add-hook 'after-init-hook
+             #'(lambda ()
+                 (setq initial-scratch-message
+                       (format "%5.2f ms for emacs to startup "
+                               (* 1000.0 (float-time
+                                          (time-subtract
+                                           after-init-time
+                                           before-init-time)))))))))
 
 ;; == basic configurations
 (eval-after-load 'simple
@@ -116,13 +105,13 @@
      (setq projectile-completion-system 'ivy))
 
 ;; == compile
-(use-package compile
-  :defines (compilation-scroll-output compilation-read-command)
-  :bind ("M-7" 'compile)
-  :config
-  (eval-after-load 'compile
-    (setq compilation-scroll-output t
-          compilation-read-command nil)))
+(global-set-key (kbd "M-7") 'compile)
+(eval-after-load 'compile
+  '(progn
+     (defvar compilation-scroll-output)
+     (defvar compilation-read-command)
+     (setq compilation-scroll-output t
+           compilation-read-command nil)))
 
 ;; == ffap
 (use-package ffap
@@ -242,7 +231,6 @@
     ))
 ;; ------------------- protobuf ------------------------
 (use-package protobuf-mode
-  :ensure t
   :mode "\\.proto\\'")
 
 ;; == adoc

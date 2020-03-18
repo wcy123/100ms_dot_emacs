@@ -199,7 +199,10 @@
         ;; prevent straight.el from loading packages at runtime, but
         ;; compile time instead
         (straight-use-package (or (plist-get args :straight) name))
-        (let ((ret (apply origin name :no-require t (plist-remove args :straight))))
+        (let ((ret (apply origin name :no-require t
+                          (plist-remove
+                           (plist-remove args :straight)
+                           :ensure))))
           (no-load-path-replace-autoload ret))))))
 (advice-add 'use-package :around #'no-load-path-use-package)
 
