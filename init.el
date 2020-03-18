@@ -194,7 +194,9 @@
   :straight
   (tmux-cc :type git
            :host github
-           :repo "wcy123/tmux-cc"))
+           :repo "wcy123/tmux-cc")
+  :commands
+  (tmux-cc-send-current-line tmux-cc-select-block tmux-cc-send-region))
 ;; == markdown
 (use-package markdown-mode
   :defines (markdown-mode-map)
@@ -204,7 +206,7 @@
               ("ESC <up>"  . markdown-move-up)
               ("ESC <down>" . markdown-move-down)
               ("ESC <left>" . markdown-promote)
-              ("ESC <right>" . markdown-demote)
+              ("ESC  <right>" . markdown-demote)
               ("C-j" . tmux-cc-send-current-line)
               ("C-M-j" . tmux-cc-select-block)
               ("C-c <RET>" . tmux-cc-send-region)
