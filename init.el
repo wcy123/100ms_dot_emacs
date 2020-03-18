@@ -40,6 +40,9 @@
     (set-default 'indent-tabs-mode nil)
     (add-to-list 'minor-mode-alist '(mark-active " Mark"))
     (defalias 'yes-or-no-p #'y-or-n-p)))
+(if (display-graphic-p)
+    nil
+  (xterm-mouse-mode 1))
 (setq
  ;; I prefer split horizontally.
  split-width-threshold 160
@@ -48,12 +51,16 @@
 ;; scroll one line at a time (less "jumpy" than defaults)
 (eval-after-load 'mwheel
   (progn
+    (defvar mouse-wheel-scroll-amount)
+    (defvar mouse-wheel-progressive-speed)
+    (defvar mouse-wheel-follow-mouse)
     (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
     (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
     (setq mouse-wheel-follow-mouse 't))) ;; scroll window under mouse
 (add-hook 'after-init-idle-hook 'show-paren-mode t nil)
 (add-hook 'after-init-idle-hook 'global-subword-mode t nil)
 (add-hook 'after-init-idle-hook 'savehist-mode t nil)
+(menu-bar-mode -1)
 
 ;; == exec-path-from-shell
 (use-package exec-path-from-shell
@@ -181,6 +188,28 @@
   :functions (leader-key-mode)
   :config
   (leader-key-mode))
+
+;; == tmux-cc
+(use-package tmux-cc
+  :straight
+  (tmux-cc :type git
+           :host github
+           :repo "wcy123/tmux-cc"))
+;; == markdown
+(use-package markdown-mode
+  :defines (markdown-mode-map)
+  :mode "\\.md\\'"
+  :mode "\\.markdown\\'"
+  :bind (:map markdown-mode-map
+              ("ESC <up>"  . markdown-move-up)
+              ("ESC <down>" . markdown-move-down)
+              ("ESC <left>" . markdown-promote)
+              ("ESC <right>" . markdown-demote)
+              ("C-j" . tmux-cc-send-current-line)
+              ("C-M-j" . tmux-cc-select-block)
+              ("C-c <RET>" . tmux-cc-send-region)
+              ("<M-RET>" . markdown-insert-list-item)))
+
 ;; ;; == c/c++
 (use-package cc-mode
   :defines (c-default-style)
