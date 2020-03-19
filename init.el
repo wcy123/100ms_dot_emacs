@@ -59,16 +59,6 @@
   (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
   )
 
-(use-package paren
-  :straight (paren :type built-in)
-  :hook (prog-mode . show-paren-mode))
-
-(use-package subword
-  :straight (subword :type built-in)
-  :defer 2
-  :config
-  (global-subword-mode 1))
-
 (use-package savehist
   :straight (savehist :type built-in)
   :defer 2
@@ -179,17 +169,6 @@
 (use-package flycheck
   :disabled t
   :hook ((c++-mode c-mode) . flycheck-mode))
-
-
-;; == clang-format
-(use-package clang-format
-  :defines (clang-format-fallback-style)
-  :after (cc-mode)
-  :config
-  (set-default 'clang-format-fallback-style "Google")
-  (add-hook 'c-mode-common-hook #'(lambda()
-                                    (add-hook 'before-save-hook
-                                              'clang-format-buffer t t))))
 
 ;; == ace-jump-mode
 (use-package ace-jump-mode)
@@ -235,7 +214,9 @@
 
 ;; ;; == c/c++
 (use-package cc-mode
+  :after (cc-mode)
   :defines (c-default-style)
+  :hook (c-mode-common . subword-mode)
   :config
   ;; 设置缩进风格. 用 M-x c-set-style ,然后用 TAB 查看补全结果,可以看到所有风格名称.
   (setq c-default-style
@@ -246,6 +227,16 @@
           (c++-mode . "stroustrup")
           (other . "gnu")
           )))
+
+;; == clang-format
+(use-package clang-format
+  :defines (clang-format-fallback-style)
+  :after (cc-mode)
+  :config
+  (set-default 'clang-format-fallback-style "Google")
+  (add-hook 'c-mode-common-hook #'(lambda()
+                                    (add-hook 'before-save-hook
+                                              'clang-format-buffer t t))))
 ;; == gud
 (use-package gud
   :defines (gud-chdir-before-run)
@@ -272,11 +263,18 @@
 (use-package elisp-mode
   :straight (elisp-mode :type built-in)
   :hook (emacs-lisp-mode-hook . auto-fill-mode)
+  :hook (emacs-lisp-mode-hook . show-paren-mode)
   :bind (:map emacs-lisp-mode-map
               ("C-c C-l" . eval-buffer)
-              ("C-c C-c" . eval-defun)
+              ("C-c C-c" . eval-defun)))
+(use-package pp
+  :straight (pp :type built-in)
+  :after (pp)
+  :bind (:map emacs-lisp-mode-map
               ("C-c C-m" . pp-macroexpand-expression)
-              ("C-c C-e" . pp-macroexpand-last-sexp)))
+              ("C-c C-e" . pp-macroexpand-last-sexp))
+  :bind (("M-:" . pp-eval-expression)
+         ("C-x C-e" . pp-eval-last-sexp)))
 ;; ------------------- protobuf ------------------------
 (use-package protobuf-mode
   :mode "\\.proto\\'")
