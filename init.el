@@ -92,7 +92,7 @@
 (use-package ivy
   :defer 2
   :diminish ivy-mode
-  :defines (ivy-use-virtual-buffers ivy-initial-inputs-alist)
+  :defines (ivy-use-virtual-buffers ivy-initial-inputs-alist ivy-display-style ivy-count-format)
   :functions (ivy-mode)
   :hook (after-init-idle .  ivy-mode)
   :config
@@ -101,7 +101,45 @@
   (setq ivy-use-virtual-buffers t)
   ;; no regexp by default
   (setq ivy-initial-inputs-alist nil)
+  (setq ivy-display-style 'fancy)
+  (setq ivy-count-format "%d/%d ")
   )
+
+(use-package counsel
+  :defines (ivy-minibuffer-map)
+  :bind (("M-y" . counsel-yank-pop)
+         :map ivy-minibuffer-map
+         ("M-y" . ivy-next-line)))
+
+(use-package swiper
+  :bind (("C-s" . swiper-isearch)
+         ("C-r" . swiper-isearch)
+         ("C-c C-r" . ivy-resume)
+         ("M-x" . counsel-M-x)
+         ("C-x C-f" . counsel-find-file))
+  :config
+  (progn
+    (ivy-mode 1)
+    (define-key read-expression-map (kbd "C-r") 'counsel-expression-history)
+    ))
+
+;;== dump jump, jump to definition
+(use-package dumb-jump
+  :defines (dumb-jump-selector)
+  :bind (("M-g o" . dumb-jump-go-other-window)
+         ("M-g j" . dumb-jump-go)
+         ("M-g b" . dumb-jump-back)
+         ("M-g i" . dumb-jump-go-prompt)
+         ("M-g l" . dumb-jump-quick-look)
+         ("M-g x" . dumb-jump-go-prefer-external)
+         ("M-g z" . dumb-jump-go-prefer-external-other-window))
+  :config
+  (setq dumb-jump-selector 'ivy)
+  ;; (setq dumb-jump-selector 'helm)
+  :init
+  ;; (dumb-jump-mode)
+  )
+
 
 ;; == avy
 (use-package avy
