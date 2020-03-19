@@ -87,12 +87,14 @@
 
 ;; == ivy mode
 (use-package ivy
-     :diminish ivy-mode
-     :defines (ivy-use-virtual-buffers)
-     :functions (ivy-mode)
-     :hook (after-init-idle .  ivy-mode)
-     :config
-     (setq ivy-use-virtual-buffers t))
+  :defer 2
+  :diminish ivy-mode
+  :defines (ivy-use-virtual-buffers)
+  :functions (ivy-mode)
+  :hook (after-init-idle .  ivy-mode)
+  :config
+  (ivy-mode 1)
+  (setq ivy-use-virtual-buffers t))
 
 ;; == avy
 (use-package avy
@@ -164,6 +166,17 @@
   :defines (company-backends)
   :config
   (add-to-list 'company-backends 'company-c-headers))
+
+(use-package yasnippet
+  :after (prog-mode)
+  :hook (prog-mode . yas-minor-mode))
+(use-package yasnippet-classic-snippets)
+(use-package yasnippet-snippets
+  :straight (yasnippet-snippets
+             :type git
+             :host github
+             :files ("*.el" "snippets")
+             :repo "AndreaCrotti/yasnippet-snippets"))
 
 ;; == flycheck ==
 (use-package flycheck
