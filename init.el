@@ -51,12 +51,15 @@
 ;; scroll one line at a time (less "jumpy" than defaults)
 (use-package mwheel
   :after (mwheel)
+  :functions (mouse-wheel-mode)
+  :defer 1
   :straight (mwheel :type built-in)
   :defines (mouse-wheel-scroll-amount mouse-wheel-progressive-speed  mouse-wheel-follow-mouse)
   :config
   (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
   (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
   (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
+  (mouse-wheel-mode 1)
   )
 
 (use-package savehist
@@ -89,12 +92,16 @@
 (use-package ivy
   :defer 2
   :diminish ivy-mode
-  :defines (ivy-use-virtual-buffers)
+  :defines (ivy-use-virtual-buffers ivy-initial-inputs-alist)
   :functions (ivy-mode)
   :hook (after-init-idle .  ivy-mode)
   :config
   (ivy-mode 1)
-  (setq ivy-use-virtual-buffers t))
+  ;; add ‘recentf-mode’ and bookmarks to ‘ivy-switch-buffer’.
+  (setq ivy-use-virtual-buffers t)
+  ;; no regexp by default
+  (setq ivy-initial-inputs-alist nil)
+  )
 
 ;; == avy
 (use-package avy
@@ -138,9 +145,11 @@
                     ffap-c-path))))
 
 ;; == company-mode
+(defvar company-backends)
 (use-package company
   :after (prog-mode)
-  :defines (company-active-map
+  :defines (
+            company-active-map
             company-idle-delay
             company-minimum-prefix-length
             company-show-numbers
@@ -167,9 +176,45 @@
   :config
   (add-to-list 'company-backends 'company-c-headers))
 
+(use-package eglot)
+(use-package lsp-mode
+  :defines (lsp-keymap-prefix)
+  :commands (lsp lsp-deferred)
+  :init (setq lsp-keymap-prefix "C-M-l")
+  :hook ((rust-mode . lsp-deferred)
+         (lsp-mode . lsp-enable-which-key-integration)
+         ))
+(use-package lsp-ui :commands lsp-ui-mode)
+(use-package company-lsp
+  :after (company)
+  :commands company-lsp
+  :config
+  (push 'company-lsp company-backends))
+(use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+(use-package dap-mode)
+(use-package which-key
+  :config
+  (which-key-mode))
+
+(use-package hippie-exp
+  :straight (hippie-exp :type built-in)
+  :bind ("M-?" . hippie-expand))
+
 (use-package yasnippet
   :after (prog-mode)
-  :hook (prog-mode . yas-minor-mode))
+  :defines (yas-minor-mode-map yas-maybe-expand)
+  :hook (prog-mode . yas-minor-mode)
+  :hook (minibuffer-setup . yas-minor-mode)
+  :bind (:map yas-minor-mode-map
+              ("<tab>" . nil)
+              ("TAB" . nil))
+  :config
+  (define-key yas-minor-mode-map (kbd "M-?") yas-maybe-expand)
+  (eval-after-load 'hippie-exp
+    '(progn
+      (add-to-list 'hippie-expand-try-functions-list 'yas-hippie-try-expand))))
+
 (use-package yasnippet-classic-snippets)
 (use-package yasnippet-snippets
   :straight (yasnippet-snippets
@@ -177,6 +222,16 @@
              :host github
              :files ("*.el" "snippets")
              :repo "AndreaCrotti/yasnippet-snippets"))
+(use-package wcy123-snippets
+  :straight (wcy123-snippets
+             :type git
+             :host github
+             :files ("*.el" "snippets")
+             :repo "wcy123/wcy123-emacs-snippets")
+  :after (yasnippet)
+  :config
+  (wcy123-snippets-initialize))
+
 
 ;; == flycheck ==
 (use-package flycheck
@@ -306,8 +361,9 @@
   :defines (rust-format-on-save)
   :functions (cargo-minor-mode company-indent-or-complete-common)
   :config
-  (add-hook 'rust-mode-hook #'cargo-minor-mode)
   (setq rust-format-on-save t))
+(use-package cargo
+  :hook (rust-mode . cargo-minor-mode))
 (use-package racer
   :defines (rust-mode-map company-tooltip-align-annotations)
   :functions (company-indent-or-complete-common )
