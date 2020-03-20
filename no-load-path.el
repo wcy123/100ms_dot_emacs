@@ -147,9 +147,10 @@
 (straight-use-package 'use-package)
 ;; suppress compilation warning
 (defvar straight-vc-git-default-clone-depth)
-;; suppress compilation warning
 (defvar straight-vc-git-default-protocol)
+(defvar straight-use-symlinks)
 (setq straight-vc-git-default-clone-depth 1)
+(setq straight-use-symlinks nil)
 (require 'use-package)
 (setq use-package-verbose nil)
 
