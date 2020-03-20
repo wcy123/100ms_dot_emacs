@@ -79,9 +79,21 @@
                                                 ,noerror)))))
 (put 'require 'byte-hunk-handler 'my-byte-compile-file-form-require)
 
-(defun no-load-path--replace-home (file)
-  (and file (replace-regexp-in-string (concat "\\`" (regexp-quote (getenv "HOME")))
-                            "~" file)))
+(defconst no-load-path-system-path
+  (expand-file-name ".." data-directory))
+
+(defun no-load-path--normalize-path (file)
+  (when file
+    (cond
+     ((string-match
+       (concat "\\`" (regexp-quote no-load-path-system-path))
+       file)
+      file (file-name-base file))
+     (:else
+      (replace-regexp-in-string
+             (concat "\\`" (regexp-quote (getenv "HOME")))
+             "~" file)))))
+
 (defun no-load-path--find-file (file)
   (let ((ret (locate-file
               (let ((file1 (format "%s" file)))
@@ -89,7 +101,7 @@
                     (file-name-sans-extension file1)
                   file1))
               load-path '(".elc" ".el") nil)))
-    (no-load-path--replace-home ret)))
+    (no-load-path--normalize-path ret)))
 
 (defun no-load-path-replace-autoload (autoload)
   (cond
@@ -98,12 +110,12 @@
          (eq (car autoload) 'autoload)
          (>= (length autoload) 3))
     (let* ((file (format "%s" (nth 2 autoload)))
-          (located-file (if (file-name-absolute-p file)
-                            file
-                          (no-load-path--find-file file))))
-     (if located-file
-         `(autoload ,(nth 1 autoload) ,located-file ,@(nthcdr 3 autoload))
-       (warn "no-load-path: cannot locate file %S in path %S" file load-path))))
+           (located-file (if (file-name-absolute-p file)
+                             file
+                           (no-load-path--find-file file))))
+      (if located-file
+          `(autoload ,(nth 1 autoload) ,located-file ,@(nthcdr 3 autoload))
+        (warn "no-load-path: cannot locate file %S in path %S" file load-path))))
    ((consp autoload) (cons (no-load-path-replace-autoload (car autoload))
                            (no-load-path-replace-autoload (cdr autoload))))
    (t autoload)))
@@ -155,10 +167,10 @@
            (let ()
              (mapc #'(lambda (feature)
                        (let* ((package-feature-file (straight--build-file package (format "%s" feature)))
-                              (feature-file (no-load-path--replace-home (locate-file
-                                                                         (file-name-base package-feature-file)
-                                                                         (list (file-name-directory package-feature-file))
-                                                                         '(".elc" ".el") nil))))
+                              (feature-file (no-load-path--normalize-path (locate-file
+                                                                           (file-name-base package-feature-file)
+                                                                           (list (file-name-directory package-feature-file))
+                                                                           '(".elc" ".el") nil))))
                          (princ (format ";; package %s provides %s\n" package feature) (current-buffer))
                          (princ (format "(puthash '%s %S no-load-path-features-mapping)\n"
                                         feature feature-file)
@@ -184,14 +196,14 @@
      (setq t1 (current-time))
      (setq ret ,form)
      (no-load-path-log "PROFILE %s takes %5.2f ms %5.2f acc" ,name
-              (* 1000.0 (float-time
-                         (time-subtract
-                          (current-time)
-                          t1)))
-              (* 1000.0 (float-time
-                         (time-subtract
-                          (current-time)
-                          before-init-time))))
+                       (* 1000.0 (float-time
+                                  (time-subtract
+                                   (current-time)
+                                   t1)))
+                       (* 1000.0 (float-time
+                                  (time-subtract
+                                   (current-time)
+                                   before-init-time))))
      ret))
 (defun no-load-path-use-package (origin name &rest args)
   `(progn
@@ -199,16 +211,16 @@
      ;; not be defined at runtime.
      (declare-function use-package-autoload-keymap nil)
      (profile-form ',name
-      ,(progn
-        ;; hacking straight-use-package integration with use-package.
-        ;; prevent straight.el from loading packages at runtime, but
-        ;; compile time instead
-        (straight-use-package (or (plist-get args :straight) name))
-        (let ((ret (apply origin name :no-require t
-                          (plist-remove
-                           (plist-remove args :straight)
-                           :ensure))))
-          (no-load-path-replace-autoload ret))))))
+                   ,(progn
+                      ;; hacking straight-use-package integration with use-package.
+                      ;; prevent straight.el from loading packages at runtime, but
+                      ;; compile time instead
+                      (straight-use-package (or (plist-get args :straight) name))
+                      (let ((ret (apply origin name :no-require t
+                                        (plist-remove
+                                         (plist-remove args :straight)
+                                         :ensure))))
+                        (no-load-path-replace-autoload ret))))))
 (advice-add 'use-package :around #'no-load-path-use-package)
 
 (defmacro no-load-path-init ()
