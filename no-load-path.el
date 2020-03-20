@@ -155,7 +155,11 @@
   ;; will be lazily loaded runtime because of `bind-key.el` is reqired
   ;; for key binding.
   ;; suppress compilation warning
-  (straight-use-package 'use-package)
+  (straight-use-package
+   '(use-package
+        :type git :host github :repo "wiegley/use-package"
+        :fork (:host github
+                     :repo "wcy123/use-package")))
   (require 'use-package))
 
 ;; dump all autoload objects discovered by straight.el then we don't
