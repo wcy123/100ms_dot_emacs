@@ -157,7 +157,7 @@
   ;; suppress compilation warning
   (straight-use-package
    '(use-package
-        :type git :host github :repo "wiegley/use-package"
+        :type git :host github :repo "jwiegley/use-package"
         :fork (:host github
                      :repo "wcy123/use-package")))
   (require 'use-package))
