@@ -368,8 +368,8 @@
 ;; -------------------- ELISP --------------------------------
 (use-package elisp-mode
   :straight (elisp-mode :type built-in)
-  :hook (emacs-lisp-mode-hook . auto-fill-mode)
-  :hook (emacs-lisp-mode-hook . show-paren-mode)
+  :hook (emacs-lisp-mode . auto-fill-mode)
+  :hook (emacs-lisp-mode . show-paren-mode)
   :bind (:map emacs-lisp-mode-map
               ("C-c C-l" . eval-buffer)
               ("C-c C-c" . eval-defun)))
