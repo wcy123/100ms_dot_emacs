@@ -16,7 +16,7 @@ init.elc: no-load-path.el
 
 %.elc: %.el
 	echo "[compile] $<" ;\
-	$(EMACS) --debug-init -Q --batch -L . -f batch-byte-compile $<
+	$(EMACS) -Q --batch -L . --eval="(require 'no-load-path)" --eval="(no-load-path-initialize)" -f batch-byte-compile $<
 
 clean:
 	rm out/*.tar.gz out/*.zip $(HOME)/.emacs.d/init.elc

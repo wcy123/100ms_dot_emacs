@@ -31,15 +31,17 @@
 ;;loaded at all
 
 (require 'bytecomp)
-(defvar no-load-path--prelude
-  `((defvar no-load-path-features-mapping (make-hash-table))
+(defconst no-load-path--prelude
+  `((defvar no-load-path-features-mapping
+      (make-hash-table))
     (defvar no-load-path--profile t)
     (defun no-load-path-log (format-string &rest args)
       (when no-load-path--profile
-        (let ((timestamp (format "[%5.2f] "  (* 1000 (float-time
-                                                      (time-subtract
-                                                       (current-time)
-                                                       before-init-time))))))
+        (let ((timestamp (format "[%5.2f] "
+				 (* 1000 (float-time
+					  (time-subtract
+					   (current-time)
+					   before-init-time))))))
           (message "%s" (concat timestamp (apply #'format format-string args))))))
     (defvar require-level 0)
     (defun my-require-advice (origin-require feature &optional filename noerror)
@@ -68,6 +70,7 @@
   "the initialization source code at runtime.")
 (mapc #'eval no-load-path--prelude)
 
+
 ;; this function hijack origin handler and cache the search path in
 ;; the compiled elisp code.
 (defun my-byte-compile-file-form-require (form)
@@ -77,7 +80,6 @@
       (byte-compile-file-form-require `(require ,feature
                                                 ,(or located-file (eval filename))
                                                 ,noerror)))))
-(put 'require 'byte-hunk-handler 'my-byte-compile-file-form-require)
 
 (defconst no-load-path-system-path
   (expand-file-name ".." data-directory))
@@ -119,40 +121,42 @@
    ((consp autoload) (cons (no-load-path-replace-autoload (car autoload))
                            (no-load-path-replace-autoload (cdr autoload))))
    (t autoload)))
+
 ;;
-(no-load-path-log "boostraping straight.el")
-(declare-function straight--build-file "")
-;; bootstraping straight.el is relatively slow, ~200ms. so only do it at compile time
-(defvar bootstrap-version)
-;; the following lines are copied from
-;; https://github.com/raxod502/straight.el#conceptual-overview but
-;; it is only loaded at compile time. Actually at runtime,
-;; straight.el is not loaded at all.
-(defvar bootstrap-version)
-(let ((bootstrap-file
-       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-      (bootstrap-version 5))
-  (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
-(no-load-path-log "straight.el is loaded")
-;; Again, we only load use-package at compile time. And use-package
-;; will be lazily loaded runtime because of `bind-key.el` is reqired
-;; for key binding.
-(straight-use-package 'use-package)
-;; suppress compilation warning
-(defvar straight-vc-git-default-clone-depth)
-(defvar straight-vc-git-default-protocol)
-(defvar straight-use-symlinks)
-(setq straight-vc-git-default-clone-depth 1)
-(setq straight-use-symlinks nil)
-(require 'use-package)
-(setq use-package-verbose nil)
+(defun no-load-path-straigh.el-snippet()
+  (no-load-path-log "boostraping straight.el")
+  (defvar straight-vc-git-default-clone-depth)
+  (defvar straight-vc-git-default-protocol)
+  (defvar straight-use-symlinks)
+  (setq straight-vc-git-default-clone-depth 1)
+  (setq straight-use-symlinks nil)
+  (setq use-package-verbose nil)
+  (declare-function straight--build-file "")
+  ;; bootstraping straight.el is relatively slow, ~200ms. so only do it at compile time
+  (defvar bootstrap-version)
+  ;; the following lines are copied from
+  ;; https://github.com/raxod502/straight.el#conceptual-overview but
+  ;; it is only loaded at compile time. Actually at runtime,
+  ;; straight.el is not loaded at all.
+  (defvar bootstrap-version)
+  (let ((bootstrap-file
+	 (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+	(bootstrap-version 5))
+    (unless (file-exists-p bootstrap-file)
+      (with-current-buffer
+	  (url-retrieve-synchronously
+	   "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+	   'silent 'inhibit-cookies)
+	(goto-char (point-max))
+	(eval-print-last-sexp)))
+    (load bootstrap-file nil 'nomessage))
+  (no-load-path-log "straight.el is loaded")
+  ;; Again, we only load use-package at compile time. And use-package
+  ;; will be lazily loaded runtime because of `bind-key.el` is reqired
+  ;; for key binding.
+  ;; suppress compilation warning
+  (straight-use-package 'use-package)
+  (require 'use-package))
 
 ;; dump all autoload objects discovered by straight.el then we don't
 ;; need straight.el at runtime.
@@ -222,7 +226,7 @@
                                          (plist-remove args :straight)
                                          :ensure))))
                         (no-load-path-replace-autoload ret))))))
-(advice-add 'use-package :around #'no-load-path-use-package)
+
 
 (defmacro no-load-path-init ()
   '(progn
@@ -233,5 +237,11 @@
      (eval-when-compile
        (no-load-path-generate-auto-load straight--autoloads-cache))
      (setq no-load-path--profile nil)))
-(no-load-path-log "NO-LOAD-PATH is LOADED")
+
+(defun no-load-path-initialize ()
+  (no-load-path-log "NO-LOAD-PATH STARTED")
+  (put 'require 'byte-hunk-handler 'my-byte-compile-file-form-require)
+  (advice-add 'use-package :around #'no-load-path-use-package)
+  (no-load-path-straigh.el-snippet)
+  (no-load-path-log "NO-LOAD-PATH LOADED"))
 (provide 'no-load-path)

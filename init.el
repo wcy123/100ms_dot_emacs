@@ -106,6 +106,7 @@
   )
 
 (use-package counsel
+  :defer t
   :defines (ivy-minibuffer-map)
   :bind (("M-y" . counsel-yank-pop)
          :map ivy-minibuffer-map
@@ -232,6 +233,7 @@
 (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
 (use-package dap-mode)
 (use-package which-key
+  :defer 1
   :config
   (which-key-mode))
 
@@ -292,6 +294,7 @@
                    :host github
                    :repo "wcy123/leader-key-mode")
   :functions (leader-key-mode)
+  :defer 1
   :config
   (leader-key-mode))
 
