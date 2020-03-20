@@ -1,7 +1,7 @@
 EMACS ?= emacs
 for_compile := init.el
 VERSION := $(shell git describe --tags HEAD)
-TARBALL := out/100ms_dot_emacs.emacs.d$(VERSION).tar.gz
+TARBALL := out/100ms_dot_emacs.emacs.d.$(VERSION).tar.gz
 
 ## ---------------------------------------------------
 all: $(SRC_TARBALL) $(SRC_ZIPBALL)  $(TARBALL)
