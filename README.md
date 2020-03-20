@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/wcy123/100ms_dot_emacs.svg?branch=master)](https://travis-ci.org/wcy123/100ms_dot_emacs)
 # `100ms_dot_emacs`
 
 Is it possible to start emacs in just 100 milliseconds? Yes.
