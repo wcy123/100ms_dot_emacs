@@ -10,6 +10,7 @@ before_install:
 script:
 - emacs --version
 - make
+- rm out/placeholder.txt
 before_deploy:
 - git config --local user.name "Wang Chunye"
 - git config --local user.email "wcy123@gmail.com"
