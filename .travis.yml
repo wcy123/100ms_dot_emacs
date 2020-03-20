@@ -1,0 +1,12 @@
+language: generic
+sudo: false
+before_install:
+  - evm install $EVM_EMACS --use --skip
+  - cask --debug
+env:
+  - EVM_EMACS=emacs-git-snapshot-travis
+script:
+  - emacs --version
+  - make
+matrix:
+    - env: EVM_EMACS=emacs-git-snapshot-travis
