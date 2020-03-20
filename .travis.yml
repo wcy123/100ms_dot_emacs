@@ -1,24 +1,26 @@
 language: emacs-lisp
 sudo: false
 env:
-  - EVM_EMACS=emacs-26.3-travis-linux-xenial
+- EVM_EMACS=emacs-26.3-travis-linux-xenial
 before_install:
-  - git clone https://github.com/rejeep/evm.git $HOME/.evm
-  - export PATH=$HOME/.evm/bin:$PATH
-  - evm config path /tmp
-  - evm install $EVM_EMACS --use --skip
+- git clone https://github.com/rejeep/evm.git $HOME/.evm
+- export PATH=$HOME/.evm/bin:$PATH
+- evm config path /tmp
+- evm install $EVM_EMACS --use --skip
 script:
-  - emacs --version
-  - make
+- emacs --version
+- make
 before_deploy:
-      # Set up git user name and tag this commit
-      - git config --local user.name "Wang Chunye"
-      - git config --local user.email "wcy123@gmail.com"
-      - export TRAVIS_TAG=${TRAVIS_TAG:-$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)}
-      - git tag $TRAVIS_TAG
+- git config --local user.name "Wang Chunye"
+- git config --local user.email "wcy123@gmail.com"
+- export TRAVIS_TAG=${TRAVIS_TAG:-$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)}
+- git tag $TRAVIS_TAG
 deploy:
   provider: releases
-  api_key: "40feb9f60569fece53e5f720a96cea21266afcd0"
-  file: "init.el"
+  api_key:
+    secure: K17mR8ZyzIv7sg1jhnGTuce6TDEwMj07r7+YITw9fBbhQnsbxb9ZYAQZKLeOogAosOE4fDtv0aqz2Hbf7nIrTnHdHvMBXXqVn/DKH4i7CkRZXXlIy+nJgsOvotxCBQFCF996H3zh/WPuEW+09ICm3OtlL/pKGdNddHFSFHRrDWs3PblSURB1pP24FSm3EENDw7gO6eS4iQY57sI3CpcrSE58fiKFDjW61OpOnYB2i5uPjwFimiCeooz7kjR/cQukswA3epRw5u00PGJgg3hTKJ/RTTHtXOfAyChBlQLKwvStmGquF7dTe7g0z3FUpAI7xzIEYSQWF9fmX6H/p22Q7+lEWoTwDso8jdCJ+bO4e/dhipWPbBiPfL/xnC6uUGDy+1/f7Mgi4J+ZII+0bfoFYmKLNfuEGkhX6FxZ2T/q7bQMi6NAIDFl0uri/3S6edqick3kUxIgImjUurAZWS08dpogh73xCMu8/HdyMCy79g8fcRIEQslimm83V5xPDheJEMlL/yYTvjjUehDSYgx09m3KDlWeqq1Qi6B5mtkzghmzkXgeG+PJPH7UptF+ZnjfC7oBRIt034Fy3ackxAZ/iLuy/bBAQ64C5YwIFHllITSSoNEQOti+3NeWMsA+JBaW7uYyqyVpRXKNyyjBTBcJfazg1FKa6a5cP8HfDCkrGt4=
+  file: init.el
   skip_cleanup: true
   draft: true
+  on:
+    repo: wcy123/100ms_dot_emacs
