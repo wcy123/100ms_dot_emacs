@@ -21,7 +21,9 @@ deploy:
   file_glob: true
   file:  out/*
   skip_cleanup: true
-  draft: true
+  name：$TRAVIS_TAG
+  tag_name: $TRAVIS_TAG
+  draft: false
   on:
     repo: wcy123/100ms_dot_emacs
     tags: true
