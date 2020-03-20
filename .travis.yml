@@ -14,8 +14,6 @@ script:
 before_deploy:
 - git config --local user.name "Wang Chunye"
 - git config --local user.email "wcy123@gmail.com"
-- export TRAVIS_TAG=${TRAVIS_TAG:-$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)}
-- git tag $TRAVIS_TAG
 deploy:
   provider: releases
   api_key:
@@ -26,3 +24,4 @@ deploy:
   draft: true
   on:
     repo: wcy123/100ms_dot_emacs
+    tags: true
