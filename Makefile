@@ -7,7 +7,7 @@ TARBALL := out/100ms_dot_emacs.emacs.d.$(VERSION).tar.gz
 all: $(SRC_TARBALL) $(SRC_ZIPBALL)  $(TARBALL)
 
 $(TARBALL): $(HOME)/.emacs.d/init.elc
-	(cd $(HOME); tar -zcf - .emacs.d) >$@
+	(cd $(HOME); tar -zcf - --exclude=.emacs.d/straight/repos .emacs.d) >$@
 
 $(HOME)/.emacs.d/init.elc:  init.elc
 	cp -v $< $@
