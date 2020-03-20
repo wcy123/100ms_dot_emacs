@@ -308,6 +308,7 @@
   :defines (markdown-mode-map)
   :mode "\\.md\\'"
   :mode "\\.markdown\\'"
+  :hook (markdown-mode . yas-minor-mode-on)
   :bind (:map markdown-mode-map
               ("ESC <up>"  . markdown-move-up)
               ("ESC <down>" . markdown-move-down)
