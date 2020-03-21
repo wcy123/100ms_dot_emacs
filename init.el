@@ -95,6 +95,8 @@
   :defines (ivy-use-virtual-buffers ivy-initial-inputs-alist ivy-display-style ivy-count-format)
   :functions (ivy-mode)
   :hook (after-init-idle .  ivy-mode)
+  :bind (:map ivy-mode-map
+              (("C-w" . ivy-yank-word)))
   :config
   (ivy-mode 1)
   ;; add ‘recentf-mode’ and bookmarks to ‘ivy-switch-buffer’.
@@ -105,6 +107,7 @@
   (setq ivy-count-format "%d/%d ")
   )
 
+(use-package ivy-hydra)
 (use-package counsel
   :defer t
   :defines (ivy-minibuffer-map)
