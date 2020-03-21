@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/wcy123/100ms_dot_emacs.svg?branch=master)](https://travis-ci.org/wcy123/100ms_dot_emacs)
 # `100ms_dot_emacs`
 
-Is it possible to start emacs in just 100 milliseconds? Yes.
+## Is it possible to start emacs in just 100 milliseconds? Yes.
 
 But how? The key is to cache everything at compile time, no `load-path` is
 needed.
@@ -36,10 +36,14 @@ e.g. `~/.emacs.d/.autoloads.el` and compile it into a 'elc' file, all
 In the sample `init.el`, I can start emacs in less than 100ms and I
 still uses many packages.
 
-How to setup the sample `init.el`?
+## How to setup the sample `init.el`?
 
-First of all, you must compile `init.el` into `init.elc`. As mentioned
-aboved, it installs and builds everything.
+### build it from source code
+
+First of all, you need to compile `init.el` into `init.elc`. As mentioned
+aboved, it does not only build `init.el`, but also download(clone), build, 
+and install everything, it takes sereral minutes if you have a decent network 
+connection.
 
 ```
 make
@@ -47,7 +51,19 @@ make
 
 put the following line into your `~/.emacs`
 
-
 ```el
 (load "~/where/to/init.elc")
 ```
+
+### download the prebuilt package
+
+If you are behind some firewalls or don't have a good network connection, 
+you maybe try to download the prebuilt package, and extract to `~..emacs.d`
+
+
+```
+curl -sLo - https://github.com/wcy123/100ms_dot_emacs/releases/download/v1.0.5/100ms_dot_emacs.emacs.d.v1.0.5.tar.gz | tar -zxvf - -C ~/
+```
+
+NOTE: you could replace `v1.0.5` to the latest version.
+
