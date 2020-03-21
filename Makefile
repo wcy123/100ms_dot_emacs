@@ -1,13 +1,13 @@
 EMACS ?= emacs
 for_compile := init.el
-VERSION := $(shell git describe --tags HEAD)
+VERSION := $(shell git describe --always --tags HEAD)
 TARBALL := out/100ms_dot_emacs.emacs.d.$(VERSION).tar.gz
 
 ## ---------------------------------------------------
 all: $(SRC_TARBALL) $(SRC_ZIPBALL)  $(TARBALL)
 
 $(TARBALL): $(HOME)/.emacs.d/init.elc
-	(cd $(HOME); tar -zcf - --exclude=.emacs.d/straight/repos .emacs.d) >$@
+	(cd -P $(HOME)/.emacs.d; cd ..;tar -zcf - --exclude=.emacs.d/straight/repos .emacs.d/init.elc .emacs.d/straight) >$@
 
 $(HOME)/.emacs.d/init.elc:  init.elc
 	cp -v $< $@
