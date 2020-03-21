@@ -382,7 +382,9 @@
   :hook (emacs-lisp-mode . show-paren-mode)
   :bind (:map emacs-lisp-mode-map
               ("C-c C-l" . eval-buffer)
-              ("C-c C-c" . eval-defun)))
+              ("C-c C-c" . eval-defun))
+  :config (require 'pp))
+
 (use-package pp
   :straight (pp :type built-in)
   :after (pp)
@@ -391,6 +393,7 @@
               ("C-c C-e" . pp-macroexpand-last-sexp))
   :bind (("M-:" . pp-eval-expression)
          ("C-x C-e" . pp-eval-last-sexp)))
+
 ;; ------------------- protobuf ------------------------
 (use-package protobuf-mode
   :mode "\\.proto\\'")
