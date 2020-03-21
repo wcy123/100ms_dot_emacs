@@ -41,7 +41,8 @@
   :straight (xt-mouse :type built-in)
   :when (not (display-graphic-p))
   :defer 2
-  :config (xterm-mouse-mode 1))
+  :config (xterm-mouse-mode 1)
+  (require 'mwheel))
 
 (setq
  ;; I prefer split horizontally.
@@ -50,10 +51,9 @@
  scroll-step 1)
 ;; scroll one line at a time (less "jumpy" than defaults)
 (use-package mwheel
-  :after (mwheel)
-  :functions (mouse-wheel-mode)
-  :defer 1
   :straight (mwheel :type built-in)
+  :functions (mouse-wheel-mode)
+  :defer t
   :defines (mouse-wheel-scroll-amount mouse-wheel-progressive-speed  mouse-wheel-follow-mouse)
   :config
   (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
