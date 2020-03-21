@@ -92,10 +92,13 @@
 (use-package ivy
   :defer 2
   :diminish ivy-mode
-  :defines (ivy-use-virtual-buffers ivy-initial-inputs-alist ivy-display-style ivy-count-format)
+  :defines (ivy-use-virtual-buffers
+            ivy-initial-inputs-alist
+            ivy-display-style ivy-count-format
+            ivy-minibuffer-map)
   :functions (ivy-mode)
   :hook (after-init-idle .  ivy-mode)
-  :bind (:map ivy-mode-map
+  :bind (:map ivy-minibuffer-map
               (("C-w" . ivy-yank-word)))
   :config
   (ivy-mode 1)
