@@ -102,7 +102,7 @@
                 (if (string= (file-name-extension file1) "el")
                     (file-name-sans-extension file1)
                   file1))
-              load-path '(".elc" ".el") nil)))
+              load-path (get-load-suffixes) nil)))
     (no-load-path--normalize-path ret)))
 
 (defun no-load-path-replace-autoload (autoload)
