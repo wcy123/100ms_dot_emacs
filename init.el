@@ -54,6 +54,7 @@
  split-width-threshold 160
  ;; keyboard scroll one line at a time
  scroll-step 1)
+(menu-bar-mode -1)
 ;; scroll one line at a time (less "jumpy" than defaults)
 (use-package mwheel
   :straight (mwheel :type built-in)
@@ -66,13 +67,13 @@
   (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
   (mouse-wheel-mode 1)
   )
-
+
+;; == savehist
 (use-package savehist
   :straight (savehist :type built-in)
   :defer 2
   :config
   (savehist-mode 1))
-(menu-bar-mode -1)
 
 ;; == exec-path-from-shell
 (use-package exec-path-from-shell
@@ -92,6 +93,10 @@
 	     (file-directory-p putty-directory))
     (setenv "PATH" (concat putty-directory ";" (getenv "PATH")))
     (add-to-list 'exec-path putty-directory)))
+
+;; == diminish
+(use-package diminish)
+
 
 ;; == ivy mode
 (use-package ivy
@@ -198,6 +203,7 @@
 (defvar company-backends)
 (use-package company
   :after (prog-mode)
+  :diminish (company-mode . "C")
   :defines (
             company-active-map
             company-idle-delay
@@ -268,7 +274,7 @@
 
 ;; (use-package yasnippet-classic-snippets
 ;;   ;; it takes ~300ms to load snippets
-;;   :disabled t )
+;;   )
 ;; (use-package yasnippet-snippets
 ;;   ;; it takes even longger
 ;;   :straight (yasnippet-snippets
@@ -436,6 +442,7 @@
 
 ;; --- gcmh
 (use-package gcmh
+  :diminish gcmh-mode
   :config
   (gcmh-mode 1))
 ;; END
