@@ -252,36 +252,39 @@
   :straight (hippie-exp :type built-in)
   :bind ("M-?" . hippie-expand))
 
-(use-package yasnippet
-  :after (prog-mode)
-  :defines (yas-minor-mode-map yas-maybe-expand)
-  :hook (prog-mode . yas-minor-mode)
-  :hook (minibuffer-setup . yas-minor-mode)
-  :bind (:map yas-minor-mode-map
-              ("<tab>" . nil)
-              ("TAB" . nil))
-  :config
-  (define-key yas-minor-mode-map (kbd "M-?") yas-maybe-expand)
-  (eval-after-load 'hippie-exp
-    '(progn
-      (add-to-list 'hippie-expand-try-functions-list 'yas-hippie-try-expand))))
+;; (use-package yasnippet
+;;   :after (prog-mode)
+;;   :defines (yas-minor-mode-map yas-maybe-expand)
+;;   :hook (prog-mode . yas-minor-mode)
+;;   :hook (minibuffer-setup . yas-minor-mode)
+;;   :bind (:map yas-minor-mode-map
+;;               ("<tab>" . nil)
+;;               ("TAB" . nil))
+;;   :config
+;;   (define-key yas-minor-mode-map (kbd "M-?") yas-maybe-expand)
+;;   (eval-after-load 'hippie-exp
+;;     '(progn
+;;       (add-to-list 'hippie-expand-try-functions-list 'yas-hippie-try-expand))))
 
-(use-package yasnippet-classic-snippets)
-(use-package yasnippet-snippets
-  :straight (yasnippet-snippets
-             :type git
-             :host github
-             :files ("*.el" "snippets")
-             :repo "AndreaCrotti/yasnippet-snippets"))
-(use-package wcy123-snippets
-  :straight (wcy123-snippets
-             :type git
-             :host github
-             :files ("*.el" "snippets")
-             :repo "wcy123/wcy123-emacs-snippets")
-  :after (yasnippet)
-  :config
-  (wcy123-snippets-initialize))
+;; (use-package yasnippet-classic-snippets
+;;   ;; it takes ~300ms to load snippets
+;;   :disabled t )
+;; (use-package yasnippet-snippets
+;;   ;; it takes even longger
+;;   :straight (yasnippet-snippets
+;;              :type git
+;;              :host github
+;;              :files ("*.el" "snippets")
+;;              :repo "AndreaCrotti/yasnippet-snippets"))
+;; (use-package wcy123-snippets
+;;   :straight (wcy123-snippets
+;;              :type git
+;;              :host github
+;;              :files ("*.el" "snippets")
+;;              :repo "wcy123/wcy123-emacs-snippets")
+;;   :after (yasnippet)
+;;   :config
+;;   (wcy123-snippets-initialize))
 
 
 ;; == flycheck ==
