@@ -50,7 +50,7 @@
         (let ((feature-file
                (gethash feature no-load-path-features-mapping filename))
               (indent (make-string (* require-level 8) ?\ )))
-          (no-load-path-log "%s LOADING %s"  indent feature)
+          (no-load-path-log "%s LOADING %s by %s"  indent feature load-file-name)
           (let* ((require-level (1+ require-level))
                  (start (current-time))
                  (ret (apply origin-require feature feature-file noerror '()))
@@ -240,7 +240,7 @@
   `(progn
      (eval-when-compile
        (no-load-path-generate-auto-load straight--autoloads-cache))
-     (setq no-load-path--profile nil)))
+     (setq no-load-path--profile (getenv "EMACS_PROFILE"))))
 
 (defun no-load-path-initialize ()
   (no-load-path-log "NO-LOAD-PATH STARTED")
