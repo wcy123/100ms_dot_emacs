@@ -2,6 +2,11 @@
                                                  (time-subtract
                      (current-time)
                      before-init-time))))
+;; A big contributor to startup times is garbage collection. We up the gc
+;; threshold to temporarily prevent it from running, then reset it later by
+;; enabling `gcmh-mode'. Not resetting it will cause stuttering/freezes.
+(setq gc-cons-threshold most-positive-fixnum)
+
 (eval-when-compile
   ;; no-load-path.el must be found in `load-path`. Fortunately this is
   ;; only needed at compile time.
@@ -426,6 +431,9 @@
   (define-key rust-mode-map (kbd "TAB") #'company-indent-or-complete-common)
   (setq company-tooltip-align-annotations t))
 
-
+;; --- gcmh
+(use-package gcmh
+  :config
+  (gcmh-mode 1))
 ;; END
 (no-load-path-done)
