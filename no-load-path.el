@@ -248,4 +248,6 @@
   (advice-add 'use-package :around #'no-load-path-use-package)
   (no-load-path-straigh.el-snippet)
   (no-load-path-log "NO-LOAD-PATH LOADED"))
+(unless (featurep 'no-load-path)
+  (no-load-path-initialize))
 (provide 'no-load-path)
