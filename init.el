@@ -331,13 +331,13 @@
   :defines (markdown-mode-map)
   :mode "\\.md\\'"
   :mode "\\.markdown\\'"
-  :hook (markdown-mode . yas-minor-mode-on)
+  ;; :hook (markdown-mode . yas-minor-mode-on)
   :bind (:map markdown-mode-map
               ("ESC <up>"  . markdown-move-up)
               ("ESC <down>" . markdown-move-down)
               ("ESC <left>" . markdown-promote)
               ("ESC  <right>" . markdown-demote)
-              ("C-j" . tmux-cc-send-current-line)
+              ("C-z" . tmux-cc-send-current-line)
               ("C-M-j" . tmux-cc-select-block)
               ("C-c <RET>" . tmux-cc-send-region)
               ("<M-RET>" . markdown-insert-list-item)))
