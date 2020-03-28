@@ -71,7 +71,8 @@
 ;; == savehist
 (use-package savehist
   :straight (savehist :type built-in)
-  :defer 2
+  ;; it is so important, so we pay 2-3ms to  initialize it, it worth.
+  ;; :defer 2
   :config
   (savehist-mode 1))
 
@@ -222,7 +223,7 @@
   (setq company-tooltip-limit           20)
   (setq company-dabbrev-downcase        nil)
   :bind (:map prog-mode-map
-              ("M-RET" . company-complete-common)))
+              ("C-r" . company-complete)))
 (use-package company-irony
   :disabled t
   :after company)
@@ -232,20 +233,39 @@
   :config
   (add-to-list 'company-backends 'company-c-headers))
 
-(use-package eglot)
+(use-package eglot
+  :defines (eglot-mode-map)
+  :hook (((c-mode c++-mode) . eglot-ensure))
+  :bind (:map eglot-mode-map
+              ("C-c h" . eglot-help-at-point)
+              ("C-c f r" . xref-find-references)
+              ("C-c f d" . eglot-find-declaration ;; xref-find-definitions
+               )
+              ("C-c f D" . xref-find-definitions-other-window)
+              ("C-c f t" . eglot-find-typeDefinition)
+              ("C-c f i" . eglot-find-implementation)
+              ("C-c =" . eglot-format-buffer)
+              ("C-c c" . eglot-completion-at-point)
+              ("C-c r" . eglot-rename)
+              ("C-c a" . eglot-code-actions))
+  :config
+  (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
+  )
 (use-package lsp-mode
   :defines (lsp-keymap-prefix)
   :commands (lsp lsp-deferred)
-  :init (setq lsp-keymap-prefix "C-M-l")
-  :hook ((rust-mode . lsp-deferred)
-         (lsp-mode . lsp-enable-which-key-integration)
-         ))
+  :init (setq lsp-keymap-prefix "C-l")
+  :hook (((rust-mode)
+          . lsp-deferred)
+         (lsp-mode . lsp-enable-which-key-integration)))
 (use-package lsp-ui :commands lsp-ui-mode)
 (use-package company-lsp
   :after (company)
   :commands company-lsp
   :config
-  (push 'company-lsp company-backends))
+  ;; no need to do it, lsp already did it
+  ;; (push 'company-lsp company-backends)
+  )
 (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
 (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
 (use-package dap-mode)
