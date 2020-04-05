@@ -427,7 +427,10 @@
               ("C-c C-l" . eval-buffer)
               ("C-c C-c" . eval-defun))
   :config (require 'pp))
-
+(use-package elisp-slime-nav
+  :after (elisp-mode)
+  :functions (elisp-slime-nav-mode)
+  :hook (emacs-lisp-mode . elisp-slime-nav-mode))
 (use-package pp
   :straight (pp :type built-in)
   :after (pp)
