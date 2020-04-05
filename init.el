@@ -345,7 +345,14 @@
            :host github
            :repo "wcy123/tmux-cc")
   :commands
-  (tmux-cc-send-current-line tmux-cc-select-block tmux-cc-send-region))
+  (tmux-cc-send-current-line tmux-cc-select-block
+                             tmux-cc-send-region))
+;; == shell
+(use-package sh-script
+  :defer t
+  :bind (:map sh-mode-map
+              ("C-z" . tmux-cc-send-current-line)
+              ("M-z" . tmux-cc-send-region)))
 ;; == markdown
 (use-package markdown-mode
   :defines (markdown-mode-map)
@@ -358,8 +365,7 @@
               ("ESC <left>" . markdown-promote)
               ("ESC  <right>" . markdown-demote)
               ("C-z" . tmux-cc-send-current-line)
-              ("C-M-j" . tmux-cc-select-block)
-              ("C-c <RET>" . tmux-cc-send-region)
+              ("M-z" . tmux-cc-send-region)
               ("<M-RET>" . markdown-insert-list-item)))
 
 ;; ;; == c/c++
