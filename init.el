@@ -40,6 +40,7 @@
     (set-default 'tab-width 4)
     (set-default 'indent-tabs-mode nil)
     (add-to-list 'minor-mode-alist '(mark-active " Mark"))
+    (pending-delete-mode 1)
     (defalias 'yes-or-no-p #'y-or-n-p)))
 
 (use-package xt-mouse
@@ -99,7 +100,11 @@
 
 ;; == diminish
 (use-package diminish)
-
+
+;;
+(use-package expand-region
+  :commands (er/expand-region)
+  :bind ("C-@" . er/expand-region))
 
 ;; == ivy mode
 (use-package ivy
