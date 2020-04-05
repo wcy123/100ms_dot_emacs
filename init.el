@@ -79,7 +79,9 @@
 ;; == exec-path-from-shell
 (use-package exec-path-from-shell
   :when (or (memq window-system '(mac ns x))
-	       (memq system-type '(darwin)))
+            (memq system-type '(darwin)))
+  :disabled t
+  :after (simple)
   :functions (exec-path-from-shell-initialize)
   :config
   (exec-path-from-shell-initialize))
@@ -234,7 +236,7 @@
   (add-to-list 'company-backends 'company-c-headers))
 
 (use-package eglot
-  :defines (eglot-mode-map)
+  :defines (eglot-mode-map eglot-server-programs)
   :hook (((c-mode c++-mode) . eglot-ensure))
   :bind (:map eglot-mode-map
               ("C-c h" . eglot-help-at-point)
@@ -350,6 +352,7 @@
 ;; == shell
 (use-package sh-script
   :defer t
+  :defines (sh-mode-map)
   :bind (:map sh-mode-map
               ("C-z" . tmux-cc-send-current-line)
               ("M-z" . tmux-cc-send-region)))
