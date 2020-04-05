@@ -58,11 +58,12 @@ put the following line into your `~/.emacs`
 ### download the prebuilt package
 
 If you are behind some firewalls or don't have a good network connection, 
-you maybe try to download the prebuilt package, and extract to `~..emacs.d`
+you maybe try to download the prebuilt package, and extract to `~/.emacs.d`
 
 
 ```
-curl -sLo - https://github.com/wcy123/100ms_dot_emacs/releases/download/v1.0.5/100ms_dot_emacs.emacs.d.v1.0.9.tar.gz | tar -zxvf - -C ~/
+curl -sLo - https://github.com/wcy123/100ms_dot_emacs/releases/download/v1.0.5/100ms_dot_emacs.emacs.d.v1.0.9.tar.gz |
+tar -zxvf - -C ~/
 ```
 
 NOTE: you could replace `v1.0.9` to the latest version.
