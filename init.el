@@ -106,6 +106,11 @@
   :commands (er/expand-region)
   :bind ("C-@" . er/expand-region))
 
+;; == help
+(use-package discover-my-major
+  :bind (("C-h RET" . discover-my-major)
+         ("C-h M-m" . discover-my-mode)))
+
 ;; == ivy mode
 (use-package ivy
   :defer 2
