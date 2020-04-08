@@ -430,6 +430,7 @@
                                                    company-cmake))))
 (use-package cmake-format
   :after (cmake-mode)
+  :disabled t ;; it seems buggy
   :when (locate-file "cmake-format" exec-path)
   :straight (cmake-format
              :type git
