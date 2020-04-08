@@ -11,3 +11,4 @@
 *.~undo-tree
 *.tar.gz
 *.zip
+out/*.gz

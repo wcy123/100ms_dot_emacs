@@ -426,7 +426,25 @@
   :hook (cmake-mode . my-cmake-mode-hook)
   :config
   (defun my-cmake-mode-hook ()
-    (set (make-local-variable 'company-backends) '(company-files company-cmake))))
+    (set (make-local-variable 'company-backends) '(company-files
+                                                   company-cmake))))
+(use-package cmake-format
+  :after (cmake-mode)
+  :when (locate-file "cmake-format" exec-path)
+  :straight (cmake-format
+             :type git
+             :host github
+             :repo "simonfxr/cmake-format.el"
+             :fork (:host github
+                          :repo "wcy123/cmake-format.el"))
+  ;; optional: enable automatic formatting on save
+  :hook ((cmake-mode . cmake-format-mode))
+  :config
+  ;; optional:
+  ;; (setq cmake-format-command "/path/to/cmake-format"
+  ;;       cmake-format-args '("list" "of" "flags"))
+  )
+
 
 ;; -------------------- ELISP --------------------------------
 (use-package elisp-mode
