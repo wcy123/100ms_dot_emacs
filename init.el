@@ -197,7 +197,8 @@
 ;; == compile
 (use-package compile
   :straight (compile :type built-in)
-  :bind (("M-7" . compile))
+  :bind (("M-7" . compile)
+         ("<f7>" . compile))
   :defines (compilation-scroll-output compilation-read-command)
   :config
        (setq compilation-scroll-output t
