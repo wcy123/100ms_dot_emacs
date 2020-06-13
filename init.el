@@ -291,6 +291,24 @@
   :straight (hippie-exp :type built-in)
   :bind ("M-?" . hippie-expand))
 
+;; == leader-key-mode
+(use-package skeleton-snippet
+  :straight
+  (skeleton-snippet :type git
+                    :host github
+                    :repo "wcy123/skeleton-snippet")
+  :bind (("C-]" . skeleton-snippet))
+  )
+(use-package skeleton-snippet-store
+  :straight
+  (skeleton-snippet-store :type git
+                          :host github
+                          :files ("*.el" "snippets")
+                          :repo "wcy123/skeleton-snippet-store")
+  :after (skeleton-snippet)
+  :config
+  (skeleton-snippet-store-initialize))
+
 ;; (use-package yasnippet
 ;;   :after (prog-mode)
 ;;   :defines (yas-minor-mode-map yas-maybe-expand)
