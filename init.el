@@ -202,7 +202,8 @@
   :defines (compilation-scroll-output compilation-read-command)
   :config
        (setq compilation-scroll-output t
-           compilation-read-command nil))
+             compilation-read-command nil
+             compilation-ask-about-save nil))
 
 ;; == ffap
 (use-package ffap
