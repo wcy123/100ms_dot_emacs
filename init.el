@@ -68,6 +68,15 @@
   (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
   (mouse-wheel-mode 1)
   )
+(use-package mouse
+  :straight (mouse :type built-in)
+  :defer t
+  :commands (mouse-yank-at-click)
+  :defines (mouse-drag-copy-region)
+  :config
+  (when (not (display-graphic-p))
+    (global-set-key (kbd "<mouse-2>") 'mouse-yank-at-click))
+  (setq mouse-drag-copy-region t))
 
 ;; == savehist
 (use-package savehist
