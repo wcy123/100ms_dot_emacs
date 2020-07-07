@@ -445,7 +445,15 @@
   :after cc-mode
   :hook (c-mode . cscope-minor-mode)
   :hook (c++-mode . cscope-minor-mode)
-  :hook (dired-mode-hook . cscope-minor-mode))
+  :hook (dired-mode-hook . cscope-minor-mode)
+  :defines (cscope-list-entry-keymap)
+  :config
+  (define-key cscope-list-entry-keymap
+    [mouse-2]  nil)
+  (define-key cscope-list-entry-keymap [S-mouse-2] nil)
+  (define-key cscope-minor-mode-keymap [mouse-3]   nil)
+  (define-key cscope-minor-mode-keymap [S-mouse-3] nil))
+
 
 ;; == cmake
 (use-package cmake-mode
