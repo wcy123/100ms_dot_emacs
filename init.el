@@ -356,8 +356,9 @@
 
 ;; == flycheck ==
 (use-package flycheck
-  :disabled t
-  :hook ((c++-mode c-mode) . flycheck-mode))
+  ;; :disabled nil
+  :hook (( ;; c++-mode c-mode
+                   python-mode) . flycheck-mode))
 
 ;; == ace-jump-mode
 (use-package ace-jump-mode)
@@ -482,7 +483,27 @@
   ;; (setq cmake-format-command "/path/to/cmake-format"
   ;;       cmake-format-args '("list" "of" "flags"))
   )
+
+;; -------------------- Python --------------------------------
+;; format on save
+(use-package elpy
+  :defer 2
+  :config
+  (elpy-enable)
+  ;; Enable Flycheck
+  (when (require 'flycheck nil t)
+  (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+  (add-hook 'elpy-mode-hook 'flycheck-mode))
+  (setq python-shell-interpreter "ipython"
+      python-shell-interpreter-args "-i --simple-prompt")
+  )
+;; https://realpython.com/python-pep8/#autoformatters
+;; Run autopep8 on save
+(use-package py-autopep8)
+(use-package python :straight (python :type built-in)
+  :hook (python-mode . py-autopep8-enable-on-save))
 
+;; (use-package blacken) ;; black is not stable.
 
 ;; -------------------- ELISP --------------------------------
 (use-package elisp-mode

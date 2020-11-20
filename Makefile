@@ -23,4 +23,4 @@ init.elc: no-load-path.el
 	$(EMACS) -Q --batch -L . --eval="(require 'no-load-path)" -f batch-byte-compile $<
 
 clean:
-	-rm out/*.tar.gz  $(HOME)/.emacs.d/init.elc
+	-rm out/*.tar.gz  init.elc $(HOME)/.emacs.d/init.elc
