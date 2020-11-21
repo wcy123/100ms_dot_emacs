@@ -301,13 +301,23 @@
   :straight (hippie-exp :type built-in)
   :bind ("M-?" . hippie-expand))
 
-;; == leader-key-mode
+;; == skeleton-snippet
 (use-package skeleton-snippet
   :straight
   (skeleton-snippet :type git
                     :host github
                     :repo "wcy123/skeleton-snippet")
   :bind (("C-]" . skeleton-snippet))
+  )
+;; == shared-clipboard
+(use-package shared-clipboard
+  :straight
+  (shared-clipboard :type git
+                    :host github
+                    :repo "wcy123/shared-clipboard")
+  :defer 2
+  :init
+  (shared-clipboard-enable)
   )
 (use-package skeleton-snippet-store
   :straight
