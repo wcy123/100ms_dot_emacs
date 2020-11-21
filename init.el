@@ -447,7 +447,7 @@
   :hook (c-mode . cscope-minor-mode)
   :hook (c++-mode . cscope-minor-mode)
   :hook (dired-mode-hook . cscope-minor-mode)
-  :defines (cscope-list-entry-keymap)
+  :defines (cscope-list-entry-keymap cscope-minor-mode-keymap)
   :config
   (define-key cscope-list-entry-keymap
     [mouse-2]  nil)
@@ -487,16 +487,33 @@
 ;; -------------------- Python --------------------------------
 ;; format on save
 (use-package elpy
-  :defer 2
-  :config
+  :after (python)
+  :defines (elpy-modules
+            elpy-rpc-pythonpath
+            python-shell-interpreter
+            python-shell-interpreter-args)
+  :functions (elpy-enable)
+  :init
+  ;; must set elpy-rpc-pythonpath eariler otherwise,
+  ;; elpy-rpc-pythonpath will be initialize when loading elpy,
+  ;; elpy-rpc and initialized by locate-library, locate-library does
+  ;; work with no-load-path.el
+  (setq elpy-rpc-pythonpath (expand-file-name "straight/build/elpy"
+                                                   user-emacs-directory))
+  (eval-after-load 'elpy
+    '(progn
+       (when (require 'flycheck nil t)
+         (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+         (add-hook 'elpy-mode-hook 'flycheck-mode))
+       (setq elpy-modules (delq 'elpy-module-yasnippet elpy-modules))
+       (setq python-shell-interpreter "ipython"
+             python-shell-interpreter-args "-i --simple-prompt"
+             )
+       ))
   (elpy-enable)
-  ;; Enable Flycheck
-  (when (require 'flycheck nil t)
-  (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
-  (add-hook 'elpy-mode-hook 'flycheck-mode))
-  (setq python-shell-interpreter "ipython"
-      python-shell-interpreter-args "-i --simple-prompt")
-  )
+  :bind (:map python-mode-map
+              ("M-." . elpy-goto-definition)
+              ))
 ;; https://realpython.com/python-pep8/#autoformatters
 ;; Run autopep8 on save
 (use-package py-autopep8)
