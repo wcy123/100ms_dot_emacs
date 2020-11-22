@@ -504,6 +504,7 @@
             python-shell-interpreter-args)
   :functions (elpy-enable)
   :init
+  (setq elpy-rpc-virtualenv-path 'current)
   ;; must set elpy-rpc-pythonpath eariler otherwise,
   ;; elpy-rpc-pythonpath will be initialize when loading elpy,
   ;; elpy-rpc and initialized by locate-library, locate-library does
