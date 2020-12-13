@@ -313,6 +313,7 @@
 (use-package shared-clipboard
   :straight
   (shared-clipboard :type git
+		    :branch "main"
                     :host github
                     :repo "wcy123/shared-clipboard")
   :defer 2
