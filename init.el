@@ -501,7 +501,8 @@
   :defines (elpy-modules
             elpy-rpc-pythonpath
             python-shell-interpreter
-            python-shell-interpreter-args)
+            python-shell-interpreter-args
+            elpy-formatter)
   :functions (elpy-enable)
   :init
   (setq elpy-rpc-virtualenv-path 'current)
@@ -517,8 +518,11 @@
          (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
          (add-hook 'elpy-mode-hook 'flycheck-mode))
        (setq elpy-modules (delq 'elpy-module-yasnippet elpy-modules))
+       (add-hook 'elpy-mode-hook (lambda ()
+                                   (add-hook 'before-save-hook 'elpy-format-code nil t)))
        (setq python-shell-interpreter "ipython"
              python-shell-interpreter-args "-i --simple-prompt"
+             elpy-formatter 'yapf
              )
        ))
   (elpy-enable)
@@ -527,9 +531,9 @@
               ))
 ;; https://realpython.com/python-pep8/#autoformatters
 ;; Run autopep8 on save
-(use-package py-autopep8)
-(use-package python :straight (python :type built-in)
-  :hook (python-mode . py-autopep8-enable-on-save))
+;; (use-package py-autopep8)
+;; (use-package python :straight (python :type built-in)
+;;   :hook (python-mode . py-autopep8-enable-on-save))
 
 ;; (use-package blacken) ;; black is not stable.
 
