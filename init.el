@@ -199,6 +199,7 @@
   :config
   (projectile-discover-projects-in-directory (getenv "PWD"))
   (setq projectile-completion-system 'ivy))
+(use-package ag)
 
 ;; == magit
 (use-package magit
