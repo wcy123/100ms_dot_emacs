@@ -95,6 +95,92 @@
   :functions (exec-path-from-shell-initialize)
   :config
   (exec-path-from-shell-initialize))
+;; == eshell
+(use-package eshell
+  :straight (eshell :type built-in)
+  :defines (eshell-prompt-regexp eshell-directory-name
+                                 eshell-prompt-function)
+  :bind (("M-1" . eshell)
+         ("<f1>" . eshell))
+  :config
+  (progn
+    (defvar zlua-env_LUAEXE
+      (or (getenv "ZLUA_LUAEXE") "/usr/bin/lua"))
+    (defvar zlua-env_SCRIPT
+      (or (getenv "ZLUA_SCRIPT") "/usr/local/z.lua/z.lua"))
+    (defun maybe-zlua (pwd)
+      (when (and (file-readable-p zlua-env_LUAEXE)
+                 (file-readable-p zlua-env_SCRIPT))
+        (call-process zlua-env_LUAEXE nil nil nil zlua-env_SCRIPT "--add" pwd)))
+    (defun with-face (str &rest face-plist)
+      (propertize str 'face face-plist))
+
+    (setq eshell-prompt-regexp "^[^#$\n]*[#$] "
+          eshell-directory-name "/home.on.host/eshell"
+          eshell-prompt-function
+          (lambda nil
+            (let ((pwd (eshell/pwd))
+                  (header-bg "#fff"))
+              (maybe-zlua pwd)
+              (concat
+               (with-face (concat pwd " ") :background header-bg)
+               (with-face (format-time-string "(%Y-%m-%d %H:%M) "
+                                              (current-time)) :background header-bg :foreground "#888")
+               (with-face
+                (or (ignore-errors
+                      (let ((backend (vc-responsible-backend
+                                      default-directory)))
+                        (concat
+                         (format "(%s)" backend)
+                         (or (if (string= "Git" backend)
+                                 (concat
+                                  " \u16D8 "
+                                  (string-trim (shell-command-to-string "git rev-parse --abbrev-ref HEAD"))))
+                             ""))))
+                    "")
+                :background header-bg)
+               (with-face "\n" :background header-bg)
+	           (if (string= pwd (getenv "HOME"))
+	               "~" (eshell/basename pwd))
+               " "
+               (user-login-name)
+               "@[-]"
+	           (if (= (user-uid) 0) "# " "$ ")))))
+
+    (defun eshell/zh (&rest args)
+      (if (not (and (file-readable-p zlua-env_LUAEXE)
+                    (file-readable-p zlua-env_SCRIPT)))
+          (error "cannot find zlua %s %s" zlua-env_LUAEXE zlua-env_SCRIPT)
+        (let* ((cmd (apply 'concat zlua-env_LUAEXE  " " zlua-env_SCRIPT
+                           " -t -l " args))
+               (output (shell-command-to-string cmd))
+               (list (split-string output "[\n]" t nil)))
+          (if (eq list nil)
+              (error "no match to %s" args)
+            (let ((dirs (seq-reduce #'(lambda (r a)
+                                        (cons (replace-regexp-in-string "^-?[0-9]+ +" "" a) r))
+                                    list nil)))
+              (my/eshell-z dirs))))))
+    (defun my/eshell-z (dirs)
+      (if (eq (cdr dirs) nil)
+          ;; single match
+          (eshell/cd (car dirs))
+        (let ((dir (ivy-read "cd to dir: " dirs)))
+          (eshell/cd dir))))
+
+    (defun eshell/zb (&rest args)
+      (let* ((list (split-string output "[\n]" t nil)))
+        (if (eq list nil)
+            (error "no match to %s" args)
+          (let ((dirs (cl-remove-duplicates
+                       (remove nil
+                               (mapcar
+                                #'(lambda (buffer)
+                                    (with-current-buffer buffer
+                                      default-directory))
+                                (buffer-list)))
+                       :test #'string=)))
+            (my/eshell-z dirs)))))))
 
 ;; == configuration for win32
 (when (eq window-system 'w32)
@@ -504,6 +590,8 @@
             elpy-rpc-pythonpath
             python-shell-interpreter
             python-shell-interpreter-args
+            elpy-rpc-virtualenv-path
+            python-mode-map
             elpy-formatter)
   :functions (elpy-enable)
   :init
