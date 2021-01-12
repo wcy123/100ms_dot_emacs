@@ -362,9 +362,12 @@
   (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
   )
 (use-package lsp-mode
-  :defines (lsp-keymap-prefix)
+  :defines (lsp-keymap-prefix lsp-diagnostic-package lsp-diagnostics-provider)
   :commands (lsp lsp-deferred)
-  :init (setq lsp-keymap-prefix "C-l")
+  :init (setq lsp-keymap-prefix "C-l"
+              ;; https://github.com/emacs-lsp/lsp-mode/issues/1413
+              ;; lsp-diagnostic-package :none
+              lsp-diagnostics-provider :none)
   :hook (((rust-mode)
           . lsp-deferred)
          (lsp-mode . lsp-enable-which-key-integration)))
@@ -665,10 +668,13 @@
 ;;; ------------------ for rust ----------------------------
 (use-package rust-mode
   :mode "\\.rs\\'"
-  :defines (rust-format-on-save)
+  :defines (rust-format-on-save flycheck-checker)
   :functions (cargo-minor-mode company-indent-or-complete-common)
   :config
-  (setq rust-format-on-save t))
+  (setq rust-format-on-save t)
+  (add-hook 'rust-mode-hook #'(lambda ()
+                                (setq flycheck-checker 'rust-clippy)))
+  (add-hook 'rust-mode-hook 'flycheck-mode))
 (use-package cargo
   :hook (rust-mode . cargo-minor-mode))
 (use-package racer
