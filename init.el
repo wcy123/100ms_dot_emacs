@@ -116,7 +116,10 @@
       (propertize str 'face face-plist))
 
     (setq eshell-prompt-regexp "^[^#$\n]*[#$] "
-          eshell-directory-name "/home.on.host/eshell"
+          eshell-directory-name (if (directory-name-p
+                                     "/home.on.host/eshell")
+                                    "/home.on.host/eshell"
+                                  "~/eshell")
           eshell-prompt-function
           (lambda nil
             (let ((pwd (eshell/pwd))
