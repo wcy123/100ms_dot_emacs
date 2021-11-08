@@ -43,6 +43,11 @@
     (pending-delete-mode 1)
     (defalias 'yes-or-no-p #'y-or-n-p)))
 
+(eval-when-compile
+  (when (locate-library "xref")
+    (use-package xref
+      :straight (xref :type built-in))))
+
 (use-package xt-mouse
   :straight (xt-mouse :type built-in)
   :when (not (display-graphic-p))
