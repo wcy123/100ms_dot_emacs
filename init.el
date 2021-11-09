@@ -351,24 +351,24 @@
   :config
   (add-to-list 'company-backends 'company-c-headers))
 
-(use-package eglot
-  :defines (eglot-mode-map eglot-server-programs)
-  :hook (((c-mode c++-mode) . eglot-ensure))
-  :bind (:map eglot-mode-map
-              ("C-c h" . eglot-help-at-point)
-              ("C-c f r" . xref-find-references)
-              ("C-c f d" . eglot-find-declaration ;; xref-find-definitions
-               )
-              ("C-c f D" . xref-find-definitions-other-window)
-              ("C-c f t" . eglot-find-typeDefinition)
-              ("C-c f i" . eglot-find-implementation)
-              ("C-c =" . eglot-format-buffer)
-              ("C-c c" . eglot-completion-at-point)
-              ("C-c r" . eglot-rename)
-              ("C-c a" . eglot-code-actions))
-  :config
-  (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
-  )
+;; (use-package eglot
+;;   :defines (eglot-mode-map eglot-server-programs)
+;;   :hook (((c-mode c++-mode) . eglot-ensure))
+;;   :bind (:map eglot-mode-map
+;;               ("C-c h" . eglot-help-at-point)
+;;               ("C-c f r" . xref-find-references)
+;;               ("C-c f d" . eglot-find-declaration ;; xref-find-definitions
+;;                )
+;;               ("C-c f D" . xref-find-definitions-other-window)
+;;               ("C-c f t" . eglot-find-typeDefinition)
+;;               ("C-c f i" . eglot-find-implementation)
+;;               ("C-c =" . eglot-format-buffer)
+;;               ("C-c c" . eglot-completion-at-point)
+;;               ("C-c r" . eglot-rename)
+;;               ("C-c a" . eglot-code-actions))
+;;   :config
+;;   (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
+;;   )
 (use-package lsp-mode
   :defines (lsp-keymap-prefix lsp-diagnostic-package lsp-diagnostics-provider)
   :commands (lsp lsp-deferred)
@@ -376,7 +376,7 @@
               ;; https://github.com/emacs-lsp/lsp-mode/issues/1413
               ;; lsp-diagnostic-package :none
               lsp-diagnostics-provider :none)
-  :hook (((rust-mode)
+  :hook (((rust-mode c-mode c++-mode)
           . lsp-deferred)
          (lsp-mode . lsp-enable-which-key-integration)))
 (use-package lsp-ui :commands lsp-ui-mode)
