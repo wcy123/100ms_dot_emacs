@@ -372,7 +372,7 @@
 (use-package lsp-mode
   :defines (lsp-keymap-prefix lsp-diagnostic-package lsp-diagnostics-provider)
   :commands (lsp lsp-deferred)
-  :init (setq lsp-keymap-prefix "C-l"
+  :init (setq lsp-keymap-prefix "M-l"
               ;; https://github.com/emacs-lsp/lsp-mode/issues/1413
               ;; lsp-diagnostic-package :none
               lsp-diagnostics-provider :none)
