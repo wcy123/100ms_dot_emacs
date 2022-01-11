@@ -685,16 +685,7 @@
   (add-hook 'rust-mode-hook 'flycheck-mode))
 (use-package cargo
   :hook (rust-mode . cargo-minor-mode))
-(use-package racer
-  :defines (rust-mode-map company-tooltip-align-annotations)
-  :functions (company-indent-or-complete-common )
-  :after (rust-mode)
-  :config
-  (add-hook 'rust-mode-hook #'racer-mode)
-  (add-hook 'racer-mode-hook #'eldoc-mode)
-  (add-hook 'racer-mode-hook #'company-mode)
-  (define-key rust-mode-map (kbd "TAB") #'company-indent-or-complete-common)
-  (setq company-tooltip-align-annotations t))
+
 ;;; ------------------ for mzscheme ----------------------------
 (use-package geiser-chez
   :config
