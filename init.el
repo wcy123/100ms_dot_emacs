@@ -6,7 +6,9 @@
 ;; threshold to temporarily prevent it from running, then reset it later by
 ;; enabling `gcmh-mode'. Not resetting it will cause stuttering/freezes.
 (setq gc-cons-threshold most-positive-fixnum)
-(require 'subr-x) ;; (string-strim) etc
+(eval-and-compile
+  ;; many package use common macros like if-let* in substitute
+  (require 'subr-x)) ;; (string-strim) etc
 (eval-when-compile
   ;; no-load-path.el must be found in `load-path`. Fortunately this is
   ;; only needed at compile time.
@@ -203,6 +205,23 @@
 
 ;; == diminish
 (use-package diminish)
+
+;; == substitute
+(use-package substitute
+  :straight
+  (substitute :type git
+              :host github
+              :repo "wcy123/substitute")
+  :bind (
+         ("M-# s" . substitute-target-below-point)
+         ("M-# r" . substitute-target-above-point)
+         ("M-# d" . substitute-target-in-defun)
+         ("M-# b" . substitute-target-in-buffer)
+         )
+  :functions (substitute-report-operation)
+  :hook (substitute-post-replace . substitute-report-operation)
+  :config
+  (setq substitute-highlight t))
 
 ;;
 (use-package expand-region

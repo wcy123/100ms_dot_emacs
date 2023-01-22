@@ -50,10 +50,12 @@
         (let ((feature-file
                (gethash feature no-load-path-features-mapping filename))
               (indent (make-string (* require-level 8) ?\ )))
-          (no-load-path-log "%s LOADING %s by %s"  indent feature load-file-name)
+          (no-load-path-log "%s LOADING %s by %s at %s"  indent
+                            feature load-file-name feature-file)
           (let* ((require-level (1+ require-level))
                  (start (current-time))
-                 (ret (apply origin-require feature feature-file noerror '()))
+                 (ret (apply origin-require feature feature-file
+                             noerror '()))
                  (end (current-time)))
             (no-load-path-log "%s LOADED %s in %5.2f ms"
                               indent
