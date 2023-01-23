@@ -227,7 +227,7 @@
 ;;
 (use-package expand-region
   :commands (er/expand-region)
-  :bind ("C-@" . er/expand-region))
+  :bind (("M-=" . er/expand-region)))
 
 ;; == ivy mode
 (use-package ivy
