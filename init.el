@@ -211,6 +211,7 @@
   :straight
   (substitute :type git
               :host github
+		      :branch "fix-compilation-warning"
               :repo "wcy123/substitute")
   :bind (
          ("M-# s" . substitute-target-below-point)
