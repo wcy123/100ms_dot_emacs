@@ -207,22 +207,22 @@
 (use-package diminish)
 
 ;; == substitute
-(use-package substitute
-  :straight
-  (substitute :type git
-              :host github
-		      :branch "fix-compilation-warning"
-              :repo "wcy123/substitute")
-  :bind (
-         ("M-# s" . substitute-target-below-point)
-         ("M-# r" . substitute-target-above-point)
-         ("M-# d" . substitute-target-in-defun)
-         ("M-# b" . substitute-target-in-buffer)
-         )
-  :functions (substitute-report-operation)
-  :hook (substitute-post-replace . substitute-report-operation)
-  :config
-  (setq substitute-highlight t))
+;; (use-package substitute
+;;   :straight
+;;   (substitute :type git
+;;               :host github
+;; 		      :branch "fix-compilation-warning"
+;;               :repo "wcy123/substitute")
+;;   :bind (
+;;          ("M-# s" . substitute-target-below-point)
+;;          ("M-# r" . substitute-target-above-point)
+;;          ("M-# d" . substitute-target-in-defun)
+;;          ("M-# b" . substitute-target-in-buffer)
+;;          )
+;;   :functions (substitute-report-operation)
+;;   :hook (substitute-post-replace . substitute-report-operation)
+;;   :config
+;;   (setq substitute-highlight t))
 
 ;;
 (use-package expand-region
@@ -705,6 +705,16 @@
 (use-package geiser-chez
   :config
   (setq geiser-chez-binary "chezscheme"))
+;;; --- prototxt ----
+(use-package prototxt-mode
+  :straight
+  (substitute :type git
+              :host github
+		      :branch "master"
+              :repo "drdv/prototxt-mode")
+  :config
+  (setq prototxt-mode-indentation-level t))
+
 ;; --- gcmh
 (use-package gcmh
   :diminish gcmh-mode
