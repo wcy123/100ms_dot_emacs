@@ -24,3 +24,6 @@ init.elc: no-load-path.el
 
 clean:
 	-rm out/*.tar.gz  init.elc $(HOME)/.emacs.d/init.elc
+
+install:
+	tar -zxvf out/100ms_dot_emacs.emacs.d.latest.tar.gz -C $(HOME)/

@@ -662,6 +662,7 @@
               ("C-c C-l" . eval-buffer)
               ("C-c C-c" . eval-defun))
   :config (require 'pp))
+
 (use-package elisp-slime-nav
   :after (elisp-mode)
   :functions (elisp-slime-nav-mode)
@@ -679,6 +680,15 @@
 ;; ------------------- protobuf ------------------------
 (use-package protobuf-mode
   :mode "\\.proto\\'")
+;;; --- prototxt ----
+(use-package prototxt-mode
+  :straight
+  (substitute :type git
+              :host github
+		      :branch "master"
+              :repo "drdv/prototxt-mode")
+  :config
+  (setq prototxt-mode-indentation-level t))
 
 ;; == adoc
 (use-package adoc-mode
@@ -705,15 +715,19 @@
 (use-package geiser-chez
   :config
   (setq geiser-chez-binary "chezscheme"))
-;;; --- prototxt ----
-(use-package prototxt-mode
+
+(use-package paredit
   :straight
-  (substitute :type git
-              :host github
+  (paredit :type git
+              :host nil
 		      :branch "master"
-              :repo "drdv/prototxt-mode")
+              :repo "https://paredit.org/cgit/paredit")
   :config
-  (setq prototxt-mode-indentation-level t))
+  (add-hook 'scheme-mode-hook
+            #'enable-paredit-mode)
+
+  (add-hook 'emacs-lisp-mode-hook
+            #'enable-paredit-mode))
 
 ;; --- gcmh
 (use-package gcmh
