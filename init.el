@@ -716,12 +716,16 @@
   :config
   (setq geiser-chez-binary "chezscheme"))
 
+(use-package geiser-guile
+  :config
+  (setq geiser-impl--implementation 'guile))
+
 (use-package paredit
   :straight
   (paredit :type git
-              :host nil
-		      :branch "master"
-              :repo "https://paredit.org/cgit/paredit")
+           :host nil
+		   :branch "master"
+           :repo "https://paredit.org/cgit/paredit")
   :config
   (add-hook 'scheme-mode-hook
             #'enable-paredit-mode)
