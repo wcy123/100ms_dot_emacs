@@ -725,7 +725,7 @@
   (paredit :type git
            :host nil
 		   :branch "master"
-           :repo "https://paredit.org/cgit/paredit")
+           :repo "https://github.com/emacsmirror/paredit")
   :config
   (add-hook 'scheme-mode-hook
             #'enable-paredit-mode)
