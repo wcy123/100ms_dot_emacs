@@ -430,7 +430,7 @@
                     :repo "wcy123/shared-clipboard")
   :defer 2
   :init
-  (shared-clipboard-enable)
+  ;; (shared-clipboard-enable)
   )
 (use-package skeleton-snippet-store
   :straight
