@@ -306,7 +306,6 @@
   :functions (projectile-discover-projects-in-directory)
   :bind-keymap ("C-x p" . projectile-command-map)
   :config
-  (projectile-discover-projects-in-directory (getenv "PWD"))
   (setq projectile-completion-system 'ivy))
 (use-package ag)
 
@@ -732,7 +731,48 @@
 
   (add-hook 'emacs-lisp-mode-hook
             #'enable-paredit-mode))
-
+;;; ------------------ for copilot ----------------------------
+(use-package copilot
+  :straight
+  (copilot :type git
+           :host github
+           :repo "copilot-emacs/copilot.el"
+           :branch "main")
+  :bind (:map copilot-completion-map
+              ("C-n" . copilot-next-completion)
+              ("C-p" . copilot-previous-completion)
+              ("C-a" . copilot-accept-completion)
+              ("C-w" . copilot-accept-completion-by-word)
+              ("C-l" . copilot-accept-completion-by-line))
+  :hook (prog-mode . copilot-mode)
+  :config
+  (setq copilot-idle-delay 0.2)
+  (setq copilot-completion-display-function #'copilot-completion-ui))
+;;; -------- for copilot chat ----------------------------
+;; cannot clone org mode.
+;; (use-package copilot-chat
+;;   :straight
+;;   (copilot-chat :type git
+;;                 :host github
+;;                 :repo "chep/copilot-chat.el"
+;;                 :branch "master")
+;;   :bind (("C-c c" . copilot-chat))
+;;   :config
+;;   (setq copilot-chat-idle-delay 0.2)
+;;   (setq copilot-chat-completion-display-function
+;;   #'copilot-chat-completion-ui))
+;;; ---------- for powershell --------
+(use-package powershell
+  :straight (powershell :type git
+                        :host github
+                        :repo "jschaf/powershell.el")
+  :mode "\\.ps1\\'"
+  :defines (powershell-mode-map)
+  :bind (:map powershell-mode-map
+              ("C-c C-c" . powershell-send-buffer)
+              ("C-c C-l" . powershell-send-region))
+  :config
+  (setq powershell-indent-offset 4))
 ;; --- gcmh
 (use-package gcmh
   :diminish gcmh-mode
