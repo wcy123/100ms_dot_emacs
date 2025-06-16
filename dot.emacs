@@ -47,9 +47,10 @@
   :config
   (savehist-mode 1))
 (use-package recentf
-     :defines (recentf-max-saved-items)
-     :config
-     (setq recentf-max-saved-items 200))
+  :defines (recentf-max-saved-items)
+  :config
+  (recentf-mode)
+  (setq recentf-max-saved-items 200))
 
 ;; (use-package ivy
 ;;   :defer 2
@@ -375,13 +376,6 @@
   (add-hook 'emacs-lisp-mode-hook
             #'enable-paredit-mode))
 
-(eval-after-load 'paredit
-  ;; why :config does not work?
-  '(progn
-     (add-hook 'scheme-mode-hook
-               #'enable-paredit-mode)
-     (add-hook 'emacs-lisp-mode-hook
-               #'enable-paredit-mode)))
 (use-package copilot
   :straight
   (copilot :type git
