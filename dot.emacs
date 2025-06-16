@@ -117,7 +117,7 @@
   :bind (("C-x C-r" . consult-recentf)
          ("C-x b" . consult-buffer)
          ("C-x x l" . consult-line)
-         ("C-x C-f" . consult-file))
+         )
   :config
   (setq consult-narrow-key "<"))
 (use-package expand-region
