@@ -80,6 +80,10 @@
   (vertico-cycle t) ;; Enable cycling for `vertico-next/previous'
   :init
   (vertico-mode))
+(use-package marginalia
+  :ensure t
+  :config
+  (marginalia-mode 1))
 ;; Emacs minibuffer configurations.
 (use-package emacs
   :custom
@@ -96,14 +100,26 @@
   (minibuffer-prompt-properties
    '(read-only t cursor-intangible t face minibuffer-prompt)))
 ;; Optionally use the `orderless' completion style.
+;;; Orderless completion style (and prot-orderless.el)
 (use-package orderless
+  :ensure t
   :custom
-  ;; Configure a custom style dispatcher (see the Consult wiki)
-  ;; (orderless-style-dispatchers '(+orderless-consult-dispatch orderless-affix-dispatch))
-  ;; (orderless-component-separator #'orderless-escapable-split-on-space)
   (completion-styles '(orderless basic))
-  (completion-category-defaults nil)
-  (completion-category-overrides '((file (styles partial-completion)))))
+  (completion-category-overrides '((file (styles basic
+                                                 partial-completion)))))
+
+(use-package consult
+  :straight
+  (consul :type git
+		  :branch "main"
+          :host github
+          :repo "minad/consult")
+  :bind (("C-x C-r" . consult-recentf)
+         ("C-x b" . consult-buffer)
+         ("C-x x l" . consult-line)
+         ("C-x C-f" . consult-file))
+  :config
+  (setq consult-narrow-key "<"))
 (use-package expand-region
   :commands (er/expand-region)
   :bind (("M-=" . er/expand-region)))
@@ -117,6 +133,10 @@
   :bind-keymap ("C-x p" . projectile-command-map)
   :config
   (projectile-mode +1)
+  (setq
+        projectile-enable-caching t
+        projectile-indexing-method 'alien
+        projectile-sort-order 'recentf)
   ;; (setq projectile-completion-system 'ivy)
   )
 (use-package magit
@@ -352,9 +372,16 @@
   :config
   (add-hook 'scheme-mode-hook
             #'enable-paredit-mode)
-
   (add-hook 'emacs-lisp-mode-hook
             #'enable-paredit-mode))
+
+(eval-after-load 'paredit
+  ;; why :config does not work?
+  '(progn
+     (add-hook 'scheme-mode-hook
+               #'enable-paredit-mode)
+     (add-hook 'emacs-lisp-mode-hook
+               #'enable-paredit-mode)))
 (use-package copilot
   :straight
   (copilot :type git
@@ -384,33 +411,12 @@
   :straight (powershell :type git
                         :host github
                         :repo "jschaf/powershell.el")
-  :mode "\\.ps1\\'"
   :defines (powershell-mode-map)
   :bind (:map powershell-mode-map
               ("C-c C-c" . powershell-send-buffer)
               ("C-c C-l" . powershell-send-region))
   :config
   (setq powershell-indent-offset 4))
-
-(load-theme 'modus-operandi)
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(compilation-skip-threshold 2)
- '(elpy-formatter 'black)
- '(package-selected-packages nil)
- '(shell-file-name "C:/Program Files/Git/usr/bin/bash.exe")
- '(split-width-threshold 1600)
- '(tool-bar-mode nil))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((t (:family "Cascadia Code" :foundry "outline" :slant normal :weight regular :height 100 :width normal)))))
-(put 'narrow-to-region 'disabled nil)
 
 
 ;; Local Variables:
