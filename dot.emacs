@@ -111,8 +111,14 @@
           (imenu buffer)
           (library reverse indexed)
           (org-roam-node reverse indexed)
-          (t reverse)))
-  (require 'vertico-quick)
+          (t reverse))
+        vertico-buffer-display-action
+        '(display-buffer-in-side-window
+         (side . right)
+         (window-width . 0.3))
+        )
+  (keymap-set vertico-map "M-q" #'vertico-quick-insert)
+  (keymap-set vertico-map "C-q" #'vertico-quick-exit)
   )
 
 (use-package marginalia
