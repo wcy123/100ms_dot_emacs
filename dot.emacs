@@ -40,6 +40,13 @@
     (add-to-list 'minor-mode-alist '(mark-active " Mark"))
     (pending-delete-mode 1)
     (defalias 'yes-or-no-p #'y-or-n-p)))
+(use-package server
+  :ensure nil
+  :defer 3
+  :config
+  (setq server-client-instructions nil)
+  (unless (server-running-p)
+    (server-start)))
 (use-package savehist
   :straight (savehist :type built-in)
   ;; it is so important, so we pay 2-3ms to  initialize it, it worth.
