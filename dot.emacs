@@ -79,12 +79,52 @@
   (vertico-count 20) ;; Show more candidates
   (vertico-resize t) ;; Grow and shrink the Vertico minibuffer
   (vertico-cycle t) ;; Enable cycling for `vertico-next/previous'
+  ;; :bind-keymap ('vertico-map)
+  ;; Toggle Vertico multiforms in active minibuffer
+  ;; "C-i" #'vertico-quick-insert
+  ;; "C-o" #'vertico-quick-exit
+  ;; "M-G" #'vertico-multiform-grid
+  ;; "M-F" #'vertico-multiform-flat
+  ;; "M-R" #'vertico-multiform-reverse
+  ;; "M-U" #'vertico-multiform-unobtrusive
+
   :init
-  (vertico-mode))
+  (vertico-mode)
+  ;; Enable vertico-multiform
+  (vertico-multiform-mode)
+
+  ;; Configure the display per command.
+  ;; Use a buffer with indices for imenu
+  ;; and a flat (Ido-like) menu for M-x.
+  (setq vertico-multiform-commands
+        '((consult-imenu buffer indexed)
+          (consult-buffer reverse indexed)
+          (consult-line buffer indexed)
+          (execute-extended-command unobtrusive))
+        ;; Configure the display per completion category.
+        ;; Use the grid display for files and a buffer
+        ;; for the consult-grep commands.
+        vertico-multiform-categories                                  ; Choose a multiform
+        '((file reverse)
+          (consult-grep buffer)
+          (consult-location)
+          (imenu buffer)
+          (library reverse indexed)
+          (org-roam-node reverse indexed)
+          (t reverse)))
+  (require 'vertico-quick)
+  )
+
 (use-package marginalia
   :ensure t
   :config
   (marginalia-mode 1))
+(use-package all-the-icons-completion
+  :after (marginalia all-the-icons)
+  :hook (marginalia-mode . all-the-icons-completion-marginalia-setup)
+  :init
+  (all-the-icons-completion-mode))
+
 ;; Emacs minibuffer configurations.
 (use-package emacs
   :custom
@@ -336,7 +376,8 @@
   :bind (:map emacs-lisp-mode-map
               ("C-c C-l" . eval-buffer)
               ("C-c C-c" . eval-defun))
-  :config (require 'pp))
+  :config
+  (require 'pp))
 (use-package elisp-slime-nav
   :after (elisp-mode)
   :functions (elisp-slime-nav-mode)
@@ -370,7 +411,7 @@
               ("M-<left>" . paredit-forward-barf-sexp)
               ("C-M-<right>" . paredit-backward-slurp-sexp)
               ("C-M-<left>" . paredit-backward-barf-sexp))
-  :config
+  :init
   (add-hook 'scheme-mode-hook
             #'enable-paredit-mode)
   (add-hook 'emacs-lisp-mode-hook
@@ -397,9 +438,9 @@
   (setq copilot-max-char-warning-disable t)
   (setq copilot-completion-display-function #'copilot-completion-ui))
 
-(use-package copilot-chat
-  :straight (:host github :repo "chep/copilot-chat.el" :files ("*.el"))
-  :after (request org markdown-mode))
+;; (use-package copilot-chat
+;;   :straight (:host github :repo "chep/copilot-chat.el" :files ("*.el"))
+;;   :after (request org markdown-mode))
 
 (use-package powershell
   :straight (powershell :type git
