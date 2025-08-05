@@ -1,0 +1,162 @@
+
+(defun kill-other-buffers ()
+    "Kill all other buffers."
+    (interactive)
+    (mapc 'kill-buffer
+          (delq (current-buffer)
+                (remove-if-not 'buffer-file-name (buffer-list)))))
+
+(global-set-key (kbd "C-x 1") 'my/delete-all-side-windows)
+(defun my/delete-all-side-windows ()
+  "Delete all side windows."
+  (interactive)
+  (when (window-parameter (selected-window) 'window-side)
+    (call-interactively 'other-window))
+  (call-interactively 'delete-other-windows)
+  (dolist (window (window-list))
+    (when (window-parameter window 'window-side)
+      (delete-window window))))
+
+(with-eval-after-load 'paredit
+  (define-key paredit-mode-map (kbd "C-'") #'paredit-forward-slurp-sexp))
+
+
+
+(global-set-key (kbd "C-x d") 'dired-sidebar-toggle-sidebar)
+
+
+(use-package vscode-icon
+  :ensure t
+  :commands (vscode-icon-for-file))
+(use-package dired-sidebar
+  :bind (("C-x C-n" . dired-sidebar-toggle-sidebar))
+  :ensure t
+  :commands (dired-sidebar-toggle-sidebar)
+  :init
+  (add-hook 'dired-sidebar-mode-hook
+            (lambda ()
+              (unless (file-remote-p default-directory)
+                (auto-revert-mode))))
+  :config
+  (push 'toggle-window-split dired-sidebar-toggle-hidden-commands)
+  (push 'rotate-windows dired-sidebar-toggle-hidden-commands)
+
+  (setq dired-sidebar-subtree-line-prefix "__")
+  (setq dired-sidebar-theme 'vscode)
+  (setq dired-sidebar-no-delete-other-windows t)
+  (setq dired-sidebar-use-term-integration t)
+  (setq dired-sidebar-use-custom-font t))
+(set-language-environment "UTF-8")
+(defun shared-clipboard-enable ())
+(server-start)
+(load "~/.emacs.d/init.elc")
+(progn
+  (setq display-buffer-alist
+        `(
+          ("\\*Buffer List\\*"
+           display-buffer-in-side-window
+           (side . top)
+           (slot . 0)
+           (dedicated . t)
+           (window-height . fit-window-to-buffer)
+           (preserve-size . (nil . t))
+           (window-parameters . ((no-other-window . t)
+                                 (no-delete-other-windows . t))))
+          ;; ((or
+          ;;   )
+          ;;  (display-buffer-in-side-window)
+          ;;  (side . left)
+          ;;  (slot . 0)
+          ;;  (window-width . 30)
+          ;;  (window-parameters .
+          ;;                     ((no-other-window . t)
+          ;;                      (inhibit-same-window . t)
+          ;;                      (no-delete-other-windows . t))
+          ;;                     ))
+          ((or
+            (derived-mode . Info-mode)
+            "^\\*info\\*$"
+            "^\\*Shell Command Output\\*$"
+            "^\\*vc-diff\\*$"
+            (derived-mode . magit-status-mode)
+               )
+           display-buffer-in-side-window
+           (side . right)
+           (slot . 0)
+           (dedicated . nil)
+           (window-height . fit-window-to-buffer)
+           (window-width . fit-window-to-buffer)
+           (preserve-size . (nil . t))
+           (window-parameters . ((no-other-window . t)
+                                 (no-delete-other-windows . t))))
+          ((or
+            (derived-mode . help-mode)
+            "^\\*eshell\\*$"
+            (derived-mode . grep-mode)
+            "^\\*compilation\\*$")
+           (display-buffer-in-side-window)
+           (side . bottom)
+           (slot . 0)
+           (dedicated . t)
+           (window-width . 30)
+           (window-parameters
+            .
+            ((no-other-window . t)
+             ;; (inhibit-same-window . t)
+             (no-delete-other-windows . t))
+            )
+           ;; not mode line
+           (body-function . (lambda (win)
+                              (with-selected-window win
+                                (setq mode-line-format nil)))))
+          ((or
+            (derived-mode . c++-mode)
+            )
+           (display-buffer-reuse-window)
+           ))))
+(menu-bar-mode t)
+(load-theme 'modus-operandi)
+;; (projectile-mode)
+(global-set-key (kbd "C-b") 'compile)
+(defun leader-key-mode--copy-dir-name ()
+  "Display the full directory name"
+  (interactive)
+  (kill-new default-directory))
+(global-set-key (kbd "C-x x c") nil)
+(global-set-key (kbd "C-x x c d") 'leader-key-mode--copy-dir-name)
+
+(add-to-list
+ 'auto-mode-alist
+ '("\\.zuo\\'" . scheme-mode))
+(add-to-list
+ 'display-buffer-alist
+ '("\\*compilation\\*" . (display-buffer-reuse-window
+                          . ((reusable-frames . t)))))
+(defun open-file-with-vscode ()
+  "Open the current file in Visual Studio Code at the current line."
+  (interactive)
+  (let ((file (buffer-file-name))
+        (line (line-number-at-pos))
+        (cols (current-column)))
+    (when file
+      (call-interactively 'save-buffer)
+      (shell-command (format "code -g %s:%d:%d" file line cols)))))
+(global-set-key (kbd "M-8") 'open-file-with-vscode)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(compilation-skip-threshold 2)
+ '(elpy-formatter 'black)
+ '(package-selected-packages nil)
+ '(shell-file-name "C:/Program Files/Git/usr/bin/bash.exe")
+ '(split-width-threshold 1600)
+ '(tool-bar-mode nil))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(default ((t (:family "Cascadia Code" :foundry "outline" :slant normal :weight regular :height 120 :width normal)))))
+(put 'narrow-to-region 'disabled nil)

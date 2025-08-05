@@ -181,24 +181,26 @@
   :commands (rg)
   :bind (("C-c s"  . rg)))
 (use-package ag)
-(use-package projectile
-  :defines (projectile-completion-system projectile-command-map)
-  :functions (projectile-discover-projects-in-directory)
-  :bind-keymap ("C-x p" . projectile-command-map)
-  :config
-  (projectile-mode +1)
-  (setq
-        projectile-enable-caching t
-        projectile-indexing-method 'alien
-        projectile-sort-order 'recentf)
-  ;; (setq projectile-completion-system 'ivy)
-  )
+;; (use-package projectile
+;;   :defines (projectile-completion-system projectile-command-map)
+;;   :functions (projectile-discover-projects-in-directory)
+;;   :bind (:map global-map
+;;               ("M-7" . projectile-compile-project)
+;;               ("<f7>" . projectile-compile-project)
+;;          :map projectile-command-map
+;;          ("p" . projectile-switch-project))
+;;   :config
+;;   (projectile-mode +1)
+;;   (setq
+;;         projectile-enable-caching t
+;;         projectile-indexing-method 'alien
+;;         projectile-sort-order 'recentf)
+;;   ;; (setq projectile-completion-system 'ivy)
+;;   )
 (use-package magit
   :bind ("C-x g" . 'magit-status))
 (use-package compile
   :straight (compile :type built-in)
-  :bind (("M-7" . compile)
-         ("<f7>" . compile))
   :defines (compilation-scroll-output compilation-read-command)
   :config
        (setq compilation-scroll-output t
