@@ -432,26 +432,26 @@
   (add-hook 'emacs-lisp-mode-hook
             #'enable-paredit-mode))
 
-(use-package copilot
-  :straight
-  (copilot :type git
-           :host github
-           :repo "copilot-emacs/copilot.el"
-           :branch "main")
-  :bind (:map copilot-completion-map
-              ("M-n" . copilot-next-completion)
-              ("M-p" . copilot-previous-completion)
-              ("<tab>" . copilot-accept-completion)
-              ("C-i" . copilot-accept-completion)
-              ("M-f" . copilot-accept-completion-by-word)
-              ("C-e" . copilot-accept-completion-by-line))
-  :bind (("M-]" . copilot-complete))
-  :hook (prog-mode . copilot-mode)
-  :config
-  (setq copilot-idle-delay nil)
-  (setq copilot-indent-offset-warning-disable t)
-  (setq copilot-max-char-warning-disable t)
-  (setq copilot-completion-display-function #'copilot-completion-ui))
+;; (use-package copilot
+;;   :straight
+;;   (copilot :type git
+;;            :host github
+;;            :repo "copilot-emacs/copilot.el"
+;;            :branch "main")
+;;   :bind (:map copilot-completion-map
+;;               ("M-n" . copilot-next-completion)
+;;               ("M-p" . copilot-previous-completion)
+;;               ("<tab>" . copilot-accept-completion)
+;;               ("C-i" . copilot-accept-completion)
+;;               ("M-f" . copilot-accept-completion-by-word)
+;;               ("C-e" . copilot-accept-completion-by-line))
+;;   :bind (("M-]" . copilot-complete))
+;;   :hook (prog-mode . copilot-mode)
+;;   :config
+;;   (setq copilot-idle-delay nil)
+;;   (setq copilot-indent-offset-warning-disable t)
+;;   (setq copilot-max-char-warning-disable t)
+;;   (setq copilot-completion-display-function #'copilot-completion-ui))
 
 ;; (use-package copilot-chat
 ;;   :straight (:host github :repo "chep/copilot-chat.el" :files ("*.el"))
@@ -469,6 +469,31 @@
   (setq powershell-indent-offset 4))
 
 
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(default ((t (:family "Cascadia Mono" :foundry "outline" :slant
+                        normal :weight regular :height 120 :width
+                        normal)))))
+
+(defun open-file-with-vscode ()
+  "Open the current file in Visual Studio Code at the current line."
+  (interactive)
+  (let ((file (buffer-file-name))
+        (line (line-number-at-pos))
+        (cols (current-column)))
+    (when file
+      (call-interactively 'save-buffer)
+      (shell-command (format "code -g %s:%d:%d" file line cols)))))
+(global-set-key (kbd "C-M-o") 'open-file-with-vscode)
 ;; Local Variables:
 ;; mode: emacs-lisp
 ;; End:
